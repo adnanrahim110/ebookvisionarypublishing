@@ -17,7 +17,7 @@ import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
 import { useReducedMotion } from "@/utils/use-reduced-motion";
 
-const iconMap: Record<string, React.ElementType> = {
+const iconMap: Record<string, React.ElementType<any>> = {
   feather: PenTool,
   "edit-3": Edit3,
   "align-left": AlignLeft,
@@ -102,7 +102,7 @@ export function ServiceCard({
   iconName,
   index = 0,
 }: ServiceCardProps) {
-  const Icon = iconMap[iconName] || BookOpen;
+  const Icon = (iconMap[iconName] || BookOpen) as any;
   const shouldReduceMotion = useReducedMotion();
   const cardRef = React.useRef<HTMLDivElement>(null);
   const isInView = useInView(cardRef, { once: true, amount: 0.15 });

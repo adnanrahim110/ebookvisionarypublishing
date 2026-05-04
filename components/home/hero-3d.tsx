@@ -18,7 +18,7 @@ function FloatingBook({
 }: any) {
   const group = React.useRef<THREE.Group>(null);
   const baseRotation = React.useRef(rotation);
-  const coverTexture = useLoader(TextureLoader, coverUrl);
+  const coverTexture = useLoader(TextureLoader, coverUrl) as THREE.Texture;
 
   React.useMemo(() => {
     coverTexture.colorSpace = THREE.SRGBColorSpace;

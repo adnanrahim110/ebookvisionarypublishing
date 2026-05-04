@@ -29,7 +29,7 @@ import { NAV_LINKS, SERVICES } from "@/constants";
 import { cn } from "@/utils/cn";
 import { Button } from "../ui/button";
 
-const iconMap: Record<string, React.ElementType> = {
+const iconMap: Record<string, React.ElementType<any>> = {
   feather: Feather,
   "edit-3": Edit3,
   "align-left": AlignLeft,
@@ -228,7 +228,7 @@ export function Navbar() {
                           <div className="absolute top-0 left-0 w-full h-1.5 bg-linear-to-r from-secondary-400 to-primary-500 opacity-80" />
 
                           {SERVICES.map((service) => {
-                            const Icon = iconMap[service.icon] || Feather;
+                            const Icon = (iconMap[service.icon] || Feather) as any;
                             const isActive = pathname === service.href;
                             return (
                               <Link
