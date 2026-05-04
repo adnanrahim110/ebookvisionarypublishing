@@ -1,91 +1,165 @@
-import Link from "next/link"
-import { COMPANY_NAME, NAV_LINKS, SERVICES, CONTACT_EMAIL, CONTACT_PHONE, ADDRESS } from "@/constants"
-import { Heading } from "@/components/ui/heading"
-import { Text } from "@/components/ui/text"
-import { Button } from "@/components/ui/button"
-import { Container } from "@/components/ui/container"
+import { Container } from "@/components/ui/container";
+import { Heading } from "@/components/ui/heading";
+import { Text } from "@/components/ui/text";
+import {
+  ADDRESS,
+  COMPANY_NAME,
+  CONTACT_EMAIL,
+  CONTACT_PHONE,
+  NAV_LINKS,
+  SERVICES,
+} from "@/constants";
+import { Mail, Phone } from "lucide-react";
+import Link from "next/link";
+
+function AnimatedFooterLink({ text, href }: { text: string; href: string }) {
+  const words = text.split(" ");
+  let globalCharIndex = 0;
+
+  return (
+    <Link
+      href={href}
+      className="group flex flex-wrap text-white/70 hover:text-white font-body text-xl transition-colors w-fit overflow-hidden py-1 -my-1"
+    >
+      {words.map((word, wIdx) => (
+        <span key={wIdx} className="flex whitespace-nowrap">
+          {word.split("").map((char, cIdx) => {
+            const delay = globalCharIndex++;
+            return (
+              <span key={cIdx} className="relative block">
+                <span
+                  className="block transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:translate-y-[-110%]"
+                  style={{ transitionDelay: `${delay * 15}ms` }}
+                >
+                  {char}
+                </span>
+                <span
+                  className="absolute inset-0 block translate-y-[110%] transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:translate-y-0 text-secondary-400 font-medium"
+                  style={{ transitionDelay: `${delay * 15}ms` }}
+                >
+                  {char}
+                </span>
+              </span>
+            );
+          })}
+          {wIdx < words.length - 1 && <span className="block">&nbsp;</span>}
+        </span>
+      ))}
+    </Link>
+  );
+}
 
 export function Footer() {
   return (
-    <footer className="bg-primary-950 text-white pt-20 pb-10">
-      <Container>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-          {/* Brand */}
-          <div className="flex flex-col gap-6">
-            <Link href="/" className="font-heading text-3xl font-bold text-white tracking-tight">
-              EVP.
-            </Link>
-            <Text variant="light" size="sm" className="max-w-xs text-primary-200 leading-relaxed">
-              Thoughtfully crafted, beautifully produced. We bring your story to life with premium publishing support from start to finish.
-            </Text>
-            <div className="flex flex-col gap-1 mt-2">
-              <a href={`mailto:${CONTACT_EMAIL}`} className="text-sm font-body text-white hover:text-secondary-400 transition-colors">
-                {CONTACT_EMAIL}
+    <footer className="bg-primary-950 text-white relative overflow-hidden pt-24 pb-6">
+      <div className="absolute -bottom-1/10 left-0 w-full overflow-hidden flex justify-center pointer-events-none select-none opacity-[0.03] z-0">
+        <span className="font-heading font-black text-[20vw] leading-none whitespace-nowrap text-white tracking-tighter">
+          VISIONARY.
+        </span>
+      </div>
+
+      <Container className="relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-0 mb-24">
+          <div className="lg:col-span-5 flex flex-col justify-between pr-0 lg:pr-16 border-b lg:border-b-0 lg:border-r border-white/10 pb-12 lg:pb-0">
+            <div>
+              <Link href="/" className="inline-block mb-8">
+                <span className="font-heading text-5xl lg:text-6xl font-bold text-white tracking-tight flex items-baseline">
+                  EVP<span className="text-secondary-500">.</span>
+                </span>
+              </Link>
+              <Text
+                size="lg"
+                className="text-white/70 font-light leading-relaxed max-w-sm mb-12"
+              >
+                Thoughtfully crafted, beautifully produced. We bring your story
+                to life with premium publishing support from start to finish.
+              </Text>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                className="group inline-flex items-center gap-5 text-white/80 hover:text-white transition-colors w-fit"
+              >
+                <span className="w-12 h-12 rounded-full border border-white/10 group-hover:border-secondary-500 group-hover:bg-secondary-500/10 flex items-center justify-center transition-all duration-500">
+                  <Mail className="w-4 h-4 text-secondary-500" />
+                </span>
+                <span className="font-body text-lg">{CONTACT_EMAIL}</span>
               </a>
-              <a href={`tel:${CONTACT_PHONE.replace(/[^0-9+]/g, '')}`} className="text-sm font-body text-white hover:text-secondary-400 transition-colors">
-                {CONTACT_PHONE}
+              <a
+                href={`tel:${CONTACT_PHONE.replace(/[^0-9+]/g, "")}`}
+                className="group inline-flex items-center gap-5 text-white/80 hover:text-white transition-colors w-fit"
+              >
+                <span className="w-12 h-12 rounded-full border border-white/10 group-hover:border-secondary-500 group-hover:bg-secondary-500/10 flex items-center justify-center transition-all duration-500">
+                  <Phone className="w-4 h-4 text-secondary-500" />
+                </span>
+                <span className="font-body text-lg">{CONTACT_PHONE}</span>
               </a>
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="flex flex-col gap-6 lg:pl-8">
-            <Heading as="h4" size="h6" className="text-white uppercase tracking-wider text-sm">Quick Links</Heading>
-            <ul className="flex flex-col gap-3">
+          <div className="lg:col-span-3 lg:pl-16 flex flex-col">
+            <Heading
+              as="h4"
+              size="h6"
+              className="text-white/40 uppercase tracking-widest text-xs mb-5 font-mono"
+            >
+              Navigation
+            </Heading>
+            <ul className="flex flex-col gap-6">
               {NAV_LINKS.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-primary-300 hover:text-white transition-colors text-sm font-body inline-flex items-center gap-2 group">
-                    <span className="w-1.5 h-1.5 rounded-full bg-secondary-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    {link.label}
-                  </Link>
+                  <AnimatedFooterLink text={link.label} href={link.href} />
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Services */}
-          <div className="flex flex-col gap-6">
-            <Heading as="h4" size="h6" className="text-white uppercase tracking-wider text-sm">Services</Heading>
-            <ul className="flex flex-col gap-3">
+          <div className="lg:col-span-4 lg:pl-16 flex flex-col border-t lg:border-t-0 lg:border-l border-white/10 pt-12 lg:pt-0">
+            <Heading
+              as="h4"
+              size="h6"
+              className="text-white/40 uppercase tracking-widest text-xs mb-5 font-mono"
+            >
+              Specialized Services
+            </Heading>
+            <ul className="flex flex-col gap-6">
               {SERVICES.slice(0, 5).map((service) => (
                 <li key={service.title}>
-                  <Link href={service.href} className="text-primary-300 hover:text-white transition-colors text-sm font-body inline-flex items-center gap-2 group">
-                    <span className="w-1.5 h-1.5 rounded-full bg-secondary-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    {service.title}
-                  </Link>
+                  <AnimatedFooterLink
+                    text={service.title}
+                    href={service.href}
+                  />
                 </li>
               ))}
             </ul>
-          </div>
-
-          {/* Contact & Newsletter */}
-          <div className="flex flex-col gap-6">
-            <Heading as="h4" size="h6" className="text-white uppercase tracking-wider text-sm">Stay Updated</Heading>
-            <Text variant="light" size="sm" className="text-primary-200">
-              Subscribe to our newsletter for publishing insights and exclusive offers.
-            </Text>
-            <form className="flex flex-col gap-3 mt-2" onSubmit={(e) => e.preventDefault()}>
-              <input 
-                type="email" 
-                placeholder="Email Address" 
-                className="bg-primary-900 border border-primary-800 text-white px-4 py-3 rounded-sm focus:outline-none focus:ring-1 focus:ring-secondary-400 text-sm font-body placeholder:text-primary-500 w-full"
-              />
-              <Button variant="secondary" className="w-full">Subscribe</Button>
-            </form>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="border-t border-primary-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <Text variant="light" size="xs" className="text-primary-400">
+        <div className="border-t border-white/10 pt-8 pb-4 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+          <Text
+            variant="light"
+            size="sm"
+            className="text-white/50 font-mono tracking-widest uppercase text-[10px] md:text-xs"
+          >
             © {new Date().getFullYear()} {COMPANY_NAME}. All rights reserved.
           </Text>
-          <div className="flex gap-6">
-            <Link href="/privacy-policy" className="text-primary-400 hover:text-white text-xs font-body transition-colors">Privacy Policy</Link>
-            <Link href="/terms-and-conditions" className="text-primary-400 hover:text-white text-xs font-body transition-colors">Terms & Conditions</Link>
+          <div className="flex gap-8">
+            <Link
+              href="/privacy-policy"
+              className="text-white/50 hover:text-secondary-400 text-[10px] md:text-xs font-mono tracking-widest uppercase transition-colors"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              href="/terms-and-conditions"
+              className="text-white/50 hover:text-secondary-400 text-[10px] md:text-xs font-mono tracking-widest uppercase transition-colors"
+            >
+              Terms & Conditions
+            </Link>
           </div>
         </div>
       </Container>
     </footer>
-  )
+  );
 }
