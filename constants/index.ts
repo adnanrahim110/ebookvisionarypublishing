@@ -4,10 +4,30 @@ export const CONTACT_EMAIL = "info@ebookvisionarypublishing.us";
 export const ADDRESS =
   "1700 Pacific Ave 16th Floor, Suite 1650, Dallas, TX 75201, United States";
 
+export const CONTACT_DETAILS = [
+  {
+    id: "phone",
+    label: "Phone",
+    value: CONTACT_PHONE,
+    href: `tel:${CONTACT_PHONE.replace(/[^\d+]/g, "")}`,
+  },
+  {
+    id: "email",
+    label: "Email",
+    value: CONTACT_EMAIL,
+    href: `mailto:${CONTACT_EMAIL}`,
+  },
+  {
+    id: "office",
+    label: "Office",
+    value: ADDRESS,
+  },
+];
+
 export const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Services", href: "/services" },
-  { label: "Portfolio", href: "/portfolio" },
+  { label: "Blogs", href: "/blogs" },
   { label: "About Us", href: "/about" },
   { label: "Contact Us", href: "/contact" },
 ];
@@ -18,7 +38,7 @@ export const SERVICES = [
     description:
       "Capture someone's real-life journey with dignity, accuracy, and storytelling finesse. We transform your ideas into a legacy worth reading.",
     href: "/services/ghostwriting",
-    icon: "feather", // placeholder for lucide icon matching
+    icon: "feather",
   },
   {
     title: "Book Editing",

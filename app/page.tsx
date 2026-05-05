@@ -35,7 +35,7 @@ export default async function Home() {
       <Pricing />
       <TestimonialsSection testimonials={testimonials} />
       <FaqAccordion />
-      <ContactSection contactInfo={globalSettings} />
+      <ContactSection />
     </>
   );
 }
