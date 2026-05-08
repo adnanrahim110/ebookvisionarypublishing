@@ -10,14 +10,27 @@ import { Section } from "@/components/ui/section";
 import { Text } from "@/components/ui/text";
 import { useReducedMotion } from "@/utils/use-reduced-motion";
 
-export function CTABanner() {
+interface CtaData {
+  title: string;
+  highlight: string;
+  description: string;
+}
+
+export function CTABanner({ 
+  theme = "light", 
+  ctaData 
+}: { 
+  theme?: "light" | "dark",
+  ctaData?: CtaData
+}) {
   const shouldReduceMotion = useReducedMotion();
   const ref = React.useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.3 });
+  const isDark = theme === "dark";
 
   return (
-    <Section spacing="lg" className="bg-white overflow-hidden relative">
-      <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-primary-200 to-transparent" />
+    <Section spacing="lg" className={`${isDark ? 'bg-primary-950' : 'bg-white'} overflow-hidden relative`}>
+      <div className={`absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent ${isDark ? 'via-primary-800' : 'via-primary-200'} to-transparent`} />
 
       <Container>
         <motion.div
@@ -30,23 +43,21 @@ export function CTABanner() {
             <div className="max-w-3xl">
               <div className="flex items-center gap-3 mb-8">
                 <span className="w-10 h-0.5 bg-secondary-400" />
-                <span className="text-xs font-semibold uppercase tracking-[0.25em] text-secondary-600 font-body">
+                <span className={`text-xs font-semibold uppercase tracking-[0.25em] ${isDark ? 'text-secondary-400' : 'text-secondary-600'} font-body`}>
                   Start Your Journey
                 </span>
               </div>
 
-              <Heading as="h2" size="h1" className="leading-[1.1]!">
-                Ready to share your{" "}
+              <Heading as="h2" size="h1" className={`leading-[1.1]! ${isDark ? 'text-white' : ''}`}>
+                {ctaData ? ctaData.title : "Ready to share your "}{" "}
                 <em className="not-italic bg-linear-to-r from-primary-500 to-secondary-500 bg-clip-text text-transparent">
-                  story
+                  {ctaData ? ctaData.highlight : "story"}
                 </em>{" "}
-                with the world?
+                {ctaData ? "" : "with the world?"}
               </Heading>
 
-              <Text className="text-primary-700/60 leading-relaxed mt-6 max-w-2xl">
-                Join hundreds of successful authors who trusted us to bring
-                their books to life. Your masterpiece deserves premium
-                treatment.
+              <Text className={`${isDark ? 'text-primary-200/60' : 'text-primary-700/60'} leading-relaxed mt-6 max-w-2xl`}>
+                {ctaData ? ctaData.description : "Join hundreds of successful authors who trusted us to bring their books to life. Your masterpiece deserves premium treatment."}
               </Text>
             </div>
 
@@ -56,26 +67,26 @@ export function CTABanner() {
                   Get a Free Consultation
                   <ArrowRight className="w-4 h-4 ml-1" />
                 </Button>
-                <Button size="lg" variant="outline" href="/services">
+                <Button size="lg" variant={isDark ? "secondary" : "outline"} href="/services">
                   Our Services
                 </Button>
               </div>
 
-              <div className="flex items-center gap-6 text-primary-400">
+              <div className={`flex items-center gap-6 ${isDark ? 'text-primary-300' : 'text-primary-400'}`}>
                 <div className="flex items-center gap-2">
-                  <span className="font-heading font-bold text-lg text-primary-800">
+                  <span className={`font-heading font-bold text-lg ${isDark ? 'text-white' : 'text-primary-800'}`}>
                     1,200+
                   </span>
-                  <span className="text-xs text-primary-500/70 font-body">
+                  <span className={`text-xs ${isDark ? 'text-primary-300/70' : 'text-primary-500/70'} font-body`}>
                     Books Published
                   </span>
                 </div>
-                <span className="w-px h-4 bg-primary-200" />
+                <span className={`w-px h-4 ${isDark ? 'bg-primary-800' : 'bg-primary-200'}`} />
                 <div className="flex items-center gap-2">
-                  <span className="font-heading font-bold text-lg text-primary-800">
+                  <span className={`font-heading font-bold text-lg ${isDark ? 'text-white' : 'text-primary-800'}`}>
                     98%
                   </span>
-                  <span className="text-xs text-primary-500/70 font-body">
+                  <span className={`text-xs ${isDark ? 'text-primary-300/70' : 'text-primary-500/70'} font-body`}>
                     Satisfaction
                   </span>
                 </div>

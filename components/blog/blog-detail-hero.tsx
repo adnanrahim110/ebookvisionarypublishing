@@ -1,17 +1,27 @@
 "use client";
 
-import * as React from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
-import Image from "next/image";
-import Link from "next/link";
-import { ArrowLeft, Clock3 } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { useReducedMotion } from "@/utils/use-reduced-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { ArrowLeft, Clock3 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import * as React from "react";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 const MONTHS = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
 function formatLong(input: string) {
@@ -67,8 +77,7 @@ export function BlogDetailHero({
   const watermarkOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
 
   const watermark = extractWatermark(title);
-  const minutes =
-    readTime ?? Math.max(4, Math.floor(title.length / 10));
+  const minutes = readTime ?? Math.max(4, Math.floor(title.length / 10));
   const issuePad = String(issueNumber).padStart(2, "0");
 
   const hasImage = !!mainImage?.asset?.url;
@@ -93,9 +102,7 @@ export function BlogDetailHero({
             className="object-cover"
           />
           <div className="absolute inset-0 bg-primary-950/55" />
-          <div className="absolute inset-0 bg-gradient-to-t from-primary-950 via-primary-950/45 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary-950/65 via-primary-950/20 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-b from-primary-950/85 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-b from-black/80 to-black/45" />
         </motion.div>
       ) : (
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-20%,#084c72_0%,#06304b_40%,#021a2b_75%,#020e16_100%)]" />
@@ -122,31 +129,6 @@ export function BlogDetailHero({
       </motion.div>
 
       <motion.div
-        initial={shouldReduceMotion ? {} : { scaleX: 0, opacity: 0 }}
-        animate={{ scaleX: 1, opacity: 1 }}
-        transition={{ duration: 1.2, delay: 0.6, ease: EASE }}
-        className="absolute top-24 left-8 lg:left-16 w-24 h-px bg-linear-to-r from-secondary-400/60 to-transparent origin-left"
-      />
-      <motion.div
-        initial={shouldReduceMotion ? {} : { scaleY: 0, opacity: 0 }}
-        animate={{ scaleY: 1, opacity: 1 }}
-        transition={{ duration: 1.2, delay: 0.7, ease: EASE }}
-        className="absolute top-24 left-8 lg:left-16 w-px h-24 bg-linear-to-b from-secondary-400/60 to-transparent origin-top"
-      />
-      <motion.div
-        initial={shouldReduceMotion ? {} : { scaleX: 0, opacity: 0 }}
-        animate={{ scaleX: 1, opacity: 1 }}
-        transition={{ duration: 1.2, delay: 0.85, ease: EASE }}
-        className="absolute top-24 right-8 lg:right-16 w-24 h-px bg-linear-to-l from-secondary-400/40 to-transparent origin-right"
-      />
-      <motion.div
-        initial={shouldReduceMotion ? {} : { scaleY: 0, opacity: 0 }}
-        animate={{ scaleY: 1, opacity: 1 }}
-        transition={{ duration: 1.2, delay: 0.95, ease: EASE }}
-        className="absolute top-24 right-8 lg:right-16 w-px h-24 bg-linear-to-b from-secondary-400/40 to-transparent origin-top"
-      />
-
-      <motion.div
         style={shouldReduceMotion ? undefined : { y: contentY }}
         className="relative z-10 will-change-transform"
       >
@@ -161,7 +143,7 @@ export function BlogDetailHero({
               href="/blogs"
               className="group/back inline-flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em] text-white/55 hover:text-secondary-300 focus-visible:text-secondary-300 transition-colors duration-300 outline-none"
             >
-              <span className="relative inline-flex w-9 h-9 items-center justify-center rounded-full border border-white/15 bg-white/[0.03] backdrop-blur-sm overflow-hidden transition-[background-color,border-color,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/back:border-secondary-300/40 group-hover/back:bg-secondary-400/10 group-hover/back:-translate-x-0.5 group-focus-visible/back:border-secondary-300/40">
+              <span className="relative inline-flex w-9 h-9 items-center justify-center rounded-full border border-white/15 bg-white/3 backdrop-blur-sm overflow-hidden transition-[background-color,border-color,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/back:border-secondary-300/40 group-hover/back:bg-secondary-400/10 group-hover/back:-translate-x-0.5 group-focus-visible/back:border-secondary-300/40">
                 <ArrowLeft className="w-3.5 h-3.5 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/back:-translate-x-0.5" />
                 <span className="absolute inset-0 rounded-full bg-secondary-400/15 scale-0 group-hover/back:scale-100 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] -z-10" />
               </span>
@@ -239,7 +221,7 @@ export function BlogDetailHero({
                   />
                 </div>
               ) : (
-                <div className="w-12 h-12 rounded-full bg-white/[0.06] border border-white/15 text-white flex items-center justify-center font-heading font-bold backdrop-blur-md">
+                <div className="w-12 h-12 rounded-full bg-white/6 border border-white/15 text-white flex items-center justify-center font-heading font-bold backdrop-blur-md">
                   {(author?.name || "EVP").charAt(0)}
                 </div>
               )}

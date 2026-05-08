@@ -9,13 +9,15 @@ interface StatItemProps {
   suffix?: string;
   label: string;
   delay?: number;
+  theme?: "light" | "dark";
 }
 
-function StatItem({ value, suffix = "", label, delay = 0 }: StatItemProps) {
+function StatItem({ value, suffix = "", label, delay = 0, theme = "light" }: StatItemProps) {
   const ref = React.useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
   const [count, setCount] = React.useState(0);
   const shouldReduceMotion = useReducedMotion();
+  const isDark = theme === "dark";
 
   React.useEffect(() => {
     if (isInView) {
@@ -50,7 +52,7 @@ function StatItem({ value, suffix = "", label, delay = 0 }: StatItemProps) {
       className="relative flex flex-col items-center text-center px-6 py-8"
     >
       <div className="flex items-baseline gap-1">
-        <span className="font-heading font-black text-6xl md:text-7xl lg:text-[5.5rem] tracking-tight text-primary-800 leading-none">
+        <span className={`font-heading font-black text-6xl md:text-7xl lg:text-[5.5rem] tracking-tight leading-none ${isDark ? 'text-white' : 'text-primary-800'}`}>
           {count}
         </span>
         {suffix && (
@@ -60,29 +62,36 @@ function StatItem({ value, suffix = "", label, delay = 0 }: StatItemProps) {
         )}
       </div>
 
-      <div className="mt-4 mb-3 h-px w-8 rounded-full bg-primary-300" />
+      <div className={`mt-4 mb-3 h-px w-8 rounded-full ${isDark ? 'bg-primary-700' : 'bg-primary-300'}`} />
 
-      <p className="text-primary-400 text-xs font-semibold uppercase tracking-[0.25em]">
+      <p className={`text-xs font-semibold uppercase tracking-[0.25em] ${isDark ? 'text-primary-300' : 'text-primary-400'}`}>
         {label}
       </p>
     </motion.div>
   );
 }
 
-export function StatsRow() {
-  const stats = [
-    { value: 1200, suffix: "+", label: "Books Published" },
-    { value: 98, suffix: "%", label: "Satisfaction Rate" },
-    { value: 50, suffix: "+", label: "Awards Won" },
-    { value: 10, suffix: "Y+", label: "Experience" },
-  ];
+interface StatsRowProps {
+  theme?: "light" | "dark";
+  statsData?: { value: number; suffix?: string; label: string }[];
+}
+
+const DEFAULT_STATS = [
+  { value: 1200, suffix: "+", label: "Books Published" },
+  { value: 98, suffix: "%", label: "Satisfaction Rate" },
+  { value: 50, suffix: "+", label: "Awards Won" },
+  { value: 10, suffix: "Y+", label: "Experience" },
+];
+
+export function StatsRow({ theme = "light", statsData = DEFAULT_STATS }: StatsRowProps) {
+  const isDark = theme === "dark";
 
   return (
-    <section className="relative bg-primary-50/60 overflow-hidden">
+    <section className={`relative overflow-hidden ${isDark ? 'bg-primary-950' : 'bg-primary-50/60'}`}>
       <div className="max-w-6xl mx-auto px-6 py-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 md:divide-x md:divide-primary-200">
-          {stats.map((stat, i) => (
-            <StatItem key={stat.label} {...stat} delay={i * 0.1} />
+        <div className={`grid grid-cols-2 md:grid-cols-4 md:divide-x ${isDark ? 'md:divide-primary-800' : 'md:divide-primary-200'}`}>
+          {statsData.map((stat, i) => (
+            <StatItem key={stat.label} {...stat} delay={i * 0.1} theme={theme} />
           ))}
         </div>
       </div>

@@ -7,7 +7,7 @@ const AppShell = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <Navbar />
-      <main className="flex-1 flex flex-col w-full overflow-hidden">
+      <main className="flex-1 flex flex-col w-full">
         {children}
       </main>
       <Footer />

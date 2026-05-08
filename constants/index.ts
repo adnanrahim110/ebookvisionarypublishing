@@ -37,56 +37,56 @@ export const SERVICES = [
     title: "Ghostwriting",
     description:
       "Capture someone's real-life journey with dignity, accuracy, and storytelling finesse. We transform your ideas into a legacy worth reading.",
-    href: "/services/ghostwriting",
+    href: "/ghostwriting",
     icon: "feather",
   },
   {
     title: "Book Editing",
     description:
       "Our professional editors refine your words to perfection, delivering clarity, polish, and impact on every page.",
-    href: "/services/editing",
+    href: "/book-editing",
     icon: "edit-3",
   },
   {
     title: "Book Formatting",
     description:
       "From layout to typography, we create clean, professional designs that elevate your book's presentation.",
-    href: "/services/formatting",
+    href: "/book-formatting",
     icon: "align-left",
   },
   {
     title: "Proofreading",
     description:
       "Careful attention to tone, clarity, pacing, and grammar, revising each section until your writing reads smoothly.",
-    href: "/services/proofreading",
+    href: "/proofreading",
     icon: "check-circle",
   },
   {
     title: "Author Website",
     description:
       "Showcase your author brand with a beautifully designed website that connects you with your audience.",
-    href: "/services/author-website",
+    href: "/author-website",
     icon: "layout",
   },
   {
     title: "Book Cover Design",
     description:
       "Creative design with expert guidance to help authors produce polished, industry-standard book covers.",
-    href: "/services/cover-design",
+    href: "/book-cover-design",
     icon: "image",
   },
   {
     title: "Book Illustration",
     description:
       "Bring your story to life with custom illustrations tailored to your narrative style.",
-    href: "/services/illustration",
+    href: "/book-illustration",
     icon: "pen-tool",
   },
   {
     title: "Book Publishing",
     description:
       "Launch globally with confidence. We handle everything from print to digital distribution.",
-    href: "/services/publishing",
+    href: "/book-publishing",
     icon: "book-open",
   },
 ];

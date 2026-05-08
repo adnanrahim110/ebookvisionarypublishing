@@ -27,7 +27,7 @@ const FAQS = [
   }
 ]
 
-export function FaqAccordion() {
+export function FaqAccordion({ faqs = FAQS }: { faqs?: { question: string, answer: string }[] }) {
   // On desktop, the first item is open by default.
   // On mobile, they can all be closed.
   const [activeIndex, setActiveIndex] = React.useState<number | null>(0)
@@ -54,7 +54,7 @@ export function FaqAccordion() {
             </div>
 
             <div className="flex flex-col gap-2">
-              {FAQS.map((faq, index) => {
+              {faqs.map((faq, index) => {
                 const isActive = activeIndex === index
 
                 return (
@@ -149,11 +149,11 @@ export function FaqAccordion() {
                       </div>
 
                       <h4 className="text-3xl lg:text-4xl font-heading font-bold text-primary-950 mb-6 leading-[1.2]">
-                        {FAQS[activeIndex]?.question}
+                        {faqs[activeIndex]?.question}
                       </h4>
                       
                       <p className="text-primary-800 text-xl leading-relaxed font-light">
-                        {FAQS[activeIndex]?.answer}
+                        {faqs[activeIndex]?.answer}
                       </p>
                     </motion.div>
                   )}
