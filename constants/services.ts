@@ -1,27 +1,41 @@
-import { ServiceData } from "@/components/services/types";
+import type { ServiceData } from "@/components/services/types";
 
 export const SERVICES_DATA: ServiceData[] = [
   {
     slug: "ghostwriting",
     title: "Ghostwriting",
-    subtitle: "Capture someone's real-life journey with dignity, accuracy, and storytelling finesse.",
+    heroTitle: "Expert Ghostwriting Services That Sounds Just Like You",
+    heroSubtitle:
+      "Work with experienced ghostwriters who are skilled enough to turn your vision, expertise and story into a professionally written manuscript designed to connect with readers and meet modern publishing standards.",
+    subtitle:
+      "Got a great idea but can't write it? Our ghost writers transform ideas, notes and experiences into engaging books that sound natural, authentic and impossible to ignore.",
     icon: "feather",
-    overview: "Everyone has a story worth telling, but not everyone has the time or the words to tell it. Our professional ghostwriting service bridges that gap. We transform your ideas, experiences, and expertise into a beautifully crafted manuscript. Whether it is a riveting memoir, a thought-provoking business book, or an imaginative fiction novel, our industry-veteran ghostwriters adapt seamlessly to your voice, ensuring the final work is authentically yours. You maintain complete creative control and 100% of the authorship rights.",
+    seo: {
+      metaTitle: "Ghostwriting Services | Ebook Visionary Publishing",
+      metaDescription:
+        "Work with experienced ghostwriters who turn your vision, expertise, and story into a professionally written manuscript that sounds like you.",
+    },
+    overviewLabel: "Ghostwriting Services",
+    overviewHeading:
+      "The Best Ghostwriting Services That Feel Authentic To Your Voice",
+    overview:
+      "Not everyone has the time, structure, or writing experience to turn an idea into a finished book and that's exactly where our professional ghostwriting services help. At Ebook Visionary Publishing, we work closely with authors, entrepreneurs, speakers and creatives to transform rough concepts, personal stories and business expertise into polished manuscripts that feel natural, engaging and true to your voice. So, whether you're building a memoir, self-help book, business title or fiction manuscript, our experienced ghostwriters handle the entire process with precision. We take pride in providing complete ghostwriting support tailored to your goals and publishing journey.",
     features: [
-      { title: "Voice Matching", description: "Our writers study your tone, cadence, and style to ensure the book sounds exactly like you." },
-      { title: "Extensive Research", description: "We conduct in-depth interviews and background research to enrich your narrative and ensure total accuracy." },
-      { title: "Complete Confidentiality", description: "Your secrets are safe. We operate under strict Non-Disclosure Agreements, guaranteeing your sole authorship." },
-      { title: "Iterative Feedback", description: "You review every chapter as it's written, allowing for continuous refinement and alignment with your vision." },
-      { title: "Genre Expertise", description: "We match you with a writer who specializes in your specific genre, bringing deep industry knowledge to your project." },
-      { title: "Publish-Ready Delivery", description: "The final manuscript is rigorously edited and formatted, ready to be sent to publishers or self-published." }
+      { title: "Voice Matching", description: "We carefully adapt to your tone, personality, and writing style so the final manuscript genuinely sounds like you." },
+      { title: "Extensive Research", description: "From industry insights to factual accuracy, we research every detail to create content that feels credible and well-informed." },
+      { title: "Complete Confidentiality", description: "Your ideas, drafts, and project details remain fully private and protected throughout the ghostwriting process." },
+      { title: "Unlimited Revisions", description: "We refine the manuscript together through feedback and revisions until every chapter feels right to you." },
+      { title: "Multi-Genre Expertise", description: "Our ghostwriters work across memoirs, business books, fiction, self-help, and more with tailored storytelling approaches." },
+      { title: "Publish-Ready Delivery", description: "Your manuscript is professionally edited, formatted, and prepared for publishing across print and digital platforms." }
     ],
+    benefitsHeading: "What Makes Us Different?",
     benefits: [
-      "Save hundreds of hours of writing time",
-      "Overcome writer's block instantly",
-      "Leverage the skills of a bestselling author",
-      "Maintain 100% of your royalties and rights",
-      "Guaranteed confidentiality and NDA protection",
-      "A structured, stress-free creative process"
+      "Professional Writers Who Understand You",
+      "Clear Communication At Every Step",
+      "Complete Ownership Of Your Book",
+      "Editing That Sharpens Your Story",
+      "Publishing Support Made Simple",
+      "No Hidden or Surprise Charges"
     ],
     stats: [
       { value: 500, suffix: "+", label: "Manuscripts Ghostwritten" },
@@ -30,45 +44,82 @@ export const SERVICES_DATA: ServiceData[] = [
       { value: 100, suffix: "%", label: "Confidentiality" }
     ],
     process: [
-      { title: "Initial Consultation", description: "We discuss your vision, goals, target audience, and the core message you want to convey.", icon: "lightbulb" },
-      { title: "Outline & Roadmap", description: "We create a detailed chapter-by-chapter outline to structure your narrative effectively.", icon: "map" },
-      { title: "Interviews & Drafting", description: "Through guided interviews, we extract your insights and begin drafting the manuscript.", icon: "pen-tool" },
-      { title: "Review & Refine", description: "You review the drafts, providing feedback to ensure the tone and content align perfectly.", icon: "sparkles" },
-      { title: "Final Polish", description: "The completed manuscript undergoes rigorous editing for flow, clarity, and impact.", icon: "rocket" }
+      { title: "Initial Consultation", description: "We begin by understanding your vision, goals, audience, and the message behind your book. This helps our professional ghostwriters create a clear direction tailored to your story.", icon: "lightbulb" },
+      { title: "Outline & Content Strategy", description: "Our team develops a structured roadmap and chapter outline to organize your ideas into a strong, reader-friendly manuscript with a professional flow.", icon: "map" },
+      { title: "Writing & Manuscript Development", description: "Using interviews, notes, and research, our ebook writers and book writing experts begin crafting your manuscript while matching your tone and voice naturally.", icon: "pen-tool" },
+      { title: "Editing & Revisions", description: "Your manuscript goes through detailed book editing services, revisions, and feedback rounds to improve clarity, pacing, readability, and overall quality.", icon: "sparkles" },
+      { title: "Final Delivery & Publishing Prep", description: "Once finalized, we prepare your manuscript for publishing with professional formatting, proofreading, and guidance for self publishing services and global distribution.", icon: "rocket" }
+    ],
+    testimonials: [
+      {
+        name: "Raymond Gill",
+        role: "Author",
+        content:
+          "I had the idea for my book for years, but I could never sit down and actually write it the way I imagined. Their ghostwriting team made the whole process feel easy. They listened carefully, understood my voice, and turned my thoughts into something that genuinely sounded like me.",
+      },
+      {
+        name: "Jessica Manen",
+        role: "Author",
+        content:
+          "What I appreciated most was how collaborative everything felt. I never felt left out of the process. Every chapter, revision, and detail was handled professionally, and the final manuscript exceeded my expectations.",
+      },
+      {
+        name: "Daniel Thomson",
+        role: "Author",
+        content:
+          "I spoke to a few ghostwriting companies before choosing Ebook Visionary Publishing, and the difference was clear right away. No confusing process, no hidden costs - just a professional team that actually cared about getting the book right.",
+      },
     ],
     faqs: [
-      { question: "Will anyone know I used a ghostwriter?", answer: "No. We sign a strict Non-Disclosure Agreement (NDA). You are listed as the sole author, and we claim no credit." },
-      { question: "How involved do I need to be?", answer: "Your involvement is entirely up to you. Most clients participate in weekly or bi-weekly interview sessions, while others provide rough notes and let us take the wheel." },
-      { question: "Who owns the copyright?", answer: "You own 100% of the copyright, royalties, and all associated rights to the book." },
-      { question: "How long does it take?", answer: "Depending on the length and complexity of the book, a full-length manuscript typically takes 4 to 6 months to complete." }
+      { question: "Will my book still sound like me?", answer: "Absolutely. Our ghostwriting services are built around your voice, tone, and ideas. We take time to understand your story so the final manuscript feels natural and authentically yours." },
+      { question: "How involved will I be during the process?", answer: "You can be as involved as you'd like. Some clients prefer weekly collaboration, while others hand over notes and let our professional ghostwriters handle the heavy lifting." },
+      { question: "Who owns the rights to the book?", answer: "You do. Once the project is completed, you retain full ownership, authorship rights, and royalties for your manuscript and published work." },
+      { question: "How long does ghostwriting usually take?", answer: "Timelines depend on the book's length, complexity, and research needs, but most book writing projects are completed within a few months with regular collaboration and feedback." }
     ],
     cta: {
-      title: "Ready to turn your ideas into a",
-      highlight: "bestselling book?",
-      description: "Don't let your story go untold. Partner with our elite ghostwriters and watch your vision come to life on the page."
+      title: "Start Your Book With A Team That Knows",
+      highlight: "Publishing.",
+      description: "No overwhelm, no confusing process, just expert guidance, powerful storytelling, and a team dedicated to getting your book done right."
     }
   },
   {
     slug: "book-editing",
     title: "Book Editing",
-    subtitle: "Refining your words to perfection, delivering clarity, polish, and impact on every page.",
+    heroTitle: "Professional Book Editing Services",
+    heroSubtitle:
+      "Refine your manuscript with expert editing designed to improve flow, clarity, readability, and overall impact.",
+    subtitle:
+      "We tighten up the flow, hone in on the message, and polish it to a fine shave, chapter by chapter, keeping your voice in the book intact.",
     icon: "edit-3",
-    overview: "Even the greatest authors need a brilliant editor. Our comprehensive book editing services are designed to elevate your manuscript from a rough draft to a publishing masterpiece. We don't just fix typos; we delve deep into the structure, pacing, character development, and thematic resonance of your work. Our team of seasoned editors treats your voice with respect, providing constructive, actionable feedback that enhances your story while preserving your unique stylistic flair.",
+    seo: {
+      metaTitle: "Book Editing Services | Ebook Visionary Publishing",
+      metaDescription:
+        "Refine your manuscript with professional book editing services that improve flow, clarity, readability, structure, and publishing readiness.",
+    },
+    overviewLabel: "Book Editing Services",
+    overviewHeading:
+      "Does Your Manuscript Need A Professional Final Polish? Give Our Editing Services A Shot Now",
+    overview:
+      "Strong ideas deserve polished writing. Our book editing services help refine your manuscript for clarity, structure, readability, and impact while preserving your unique voice and message. Whether your book needs developmental editing, line editing, proofreading, or a final polish before publishing, our experienced editors carefully review every chapter to improve flow, strengthen storytelling, and eliminate distractions that pull readers out of the experience. From first-time authors to established writers, Ebook Visionary Publishing provides professional editing support designed to elevate your manuscript and prepare it for publishing with confidence.",
+    featuresLabel: "Best Editing Support For Every Stage Of Your Manuscript.",
     features: [
-      { title: "Developmental Editing", description: "Addressing big-picture elements like plot holes, pacing issues, character arcs, and thematic consistency." },
-      { title: "Copy Editing", description: "Fine-tuning sentences for flow, clarity, word choice, and syntactic consistency." },
-      { title: "Line Editing", description: "Polishing your prose line-by-line to enhance style, rhythm, and readability." },
-      { title: "Editorial Assessment", description: "A comprehensive critique of your manuscript's strengths and areas for improvement before deep editing begins." },
-      { title: "Fact-Checking", description: "Rigorous verification of historical, technical, or factual claims within your non-fiction or historical fiction work." },
-      { title: "Formatting Compliance", description: "Ensuring your manuscript meets industry-standard formatting guidelines for submission." }
+      { title: "Developmental Editing", description: "We strengthen structure, pacing, clarity, and overall storytelling to help your manuscript flow naturally from beginning to end." },
+      { title: "Copy Editing", description: "Our editors refine grammar, sentence structure, consistency, and readability to create a smoother reading experience." },
+      { title: "Line Editing", description: "Every line is carefully polished to improve tone, word choice, rhythm, and clarity while keeping your voice intact." },
+      { title: "Editorial Assessment", description: "Receive professional feedback on your manuscript's strengths, weak areas, and opportunities for improvement before moving forward." },
+      { title: "Fact-Checking", description: "We review important details, references, and information for greater accuracy, credibility, and consistency throughout your book." },
+      { title: "Formatting Compliance", description: "Your manuscript is prepared to meet modern print and digital publishing standards across major publishing platforms." }
     ],
+    benefitsHeading: "Why Authors Trust Our Editing Team?",
+    benefitsSubheading:
+      "Our editing team focuses on more than correcting mistakes, we help strengthen your manuscript while preserving your voice, style, and message.",
     benefits: [
-      "Elevate your unique writing style",
-      "Eliminate plot holes and narrative inconsistencies",
-      "Enhance reader engagement and retention",
-      "Prepare your manuscript for traditional publishing",
-      "Learn and grow as an author through expert feedback",
-      "Ensure grammatical and structural perfection"
+      "Strengthen clarity without losing voice",
+      "Professional editors for every manuscript",
+      "Polished writing that feels natural",
+      "Detailed editing with honest feedback",
+      "Publishing-ready quality on every page",
+      "Editing tailored to your genre"
     ],
     stats: [
       { value: 2, suffix: "M+", label: "Words Edited Annually" },
@@ -77,22 +128,42 @@ export const SERVICES_DATA: ServiceData[] = [
       { value: 10, suffix: "Y+", label: "Industry Experience" }
     ],
     process: [
-      { title: "Manuscript Evaluation", description: "We review your manuscript to determine the level of editing required.", icon: "lightbulb" },
-      { title: "Structural Review", description: "We analyze the overarching narrative, focusing on pacing, plot, and character development.", icon: "map" },
-      { title: "Line-by-Line Polish", description: "Our editors comb through your prose, refining syntax, word choice, and flow.", icon: "pen-tool" },
-      { title: "Author Revisions", description: "You review our suggested changes and feedback, maintaining ultimate control over your work.", icon: "sparkles" },
-      { title: "Final Proofing", description: "A final pass to catch any lingering typos, grammatical errors, or inconsistencies.", icon: "rocket" }
+      { title: "Manuscript Review", description: "We carefully evaluate your manuscript to identify what's working, what needs improvement, and the level of editing required to strengthen your book.", icon: "lightbulb" },
+      { title: "Big-Picture Editing", description: "Our editors refine structure, pacing, clarity, and chapter flow to make sure your story keeps readers engaged from beginning to end.", icon: "map" },
+      { title: "Line-By-Line Refinement", description: "Every sentence is polished for grammar, readability, tone, and consistency while keeping your writing style natural and authentic.", icon: "pen-tool" },
+      { title: "Collaborative Revisions", description: "You review the edits, share feedback, and stay involved throughout the process so the final manuscript still feels completely yours.", icon: "sparkles" },
+      { title: "Final Proof & Publishing Prep", description: "Before publishing, we complete a final quality check and prepare your manuscript for professional print and digital formatting.", icon: "rocket" }
+    ],
+    testimonials: [
+      {
+        name: "Rachel Mike",
+        role: "Author",
+        content:
+          "My manuscript had good ideas, but the editing team helped turn it into an actual book. They improved the flow, cleaned up the structure, and somehow made everything sound sharper without changing my voice.",
+      },
+      {
+        name: "Kevin Travis",
+        role: "Author",
+        content:
+          "I didn't realize how much my book needed professional editing until I worked with Ebook Visionary Publishing. The feedback was detailed, thoughtful, and incredibly easy to follow.",
+      },
+      {
+        name: "Lauren Murrey",
+        role: "Author",
+        content:
+          "What I loved most was that the editing never felt robotic or overly critical. The team genuinely cared about making the book stronger while still keeping it personal and authentic.",
+      },
     ],
     faqs: [
-      { question: "What is the difference between copy editing and developmental editing?", answer: "Developmental editing focuses on the 'big picture'—plot, pacing, and structure. Copy editing focuses on the mechanics—grammar, spelling, and sentence flow." },
-      { question: "Will editing change my unique voice?", answer: "Absolutely not. Our editors are trained to enhance your voice, not replace it. We suggest improvements that make your writing clearer while preserving your style." },
-      { question: "Do I have to accept all your changes?", answer: "No. All edits are provided as suggestions using 'Track Changes'. You have the final say on what stays and what goes." },
-      { question: "How do you handle specialized or technical non-fiction?", answer: "We assign your manuscript to an editor with a background or expertise in your specific subject matter to ensure accuracy and appropriate terminology." }
+      { question: "What type of editing does my book need?", answer: "That depends on your manuscript's current stage. Some books need structural improvements and developmental editing, while others only require line editing, proofreading, or a final polish before publishing." },
+      { question: "Will editing change my writing style?", answer: "Not at all. Our book editing services are designed to strengthen clarity, flow, and readability while preserving your natural voice and tone." },
+      { question: "Can I review the edits before they're finalized?", answer: "Absolutely. You stay involved throughout the editing process and have full control over which suggestions and revisions you'd like to accept." },
+      { question: "Do you edit both fiction and nonfiction books?", answer: "Yes. Our professional editors work across memoirs, business books, self-help, fiction, and other genres with editing tailored to your audience and writing style." }
     ],
     cta: {
-      title: "Give your manuscript the",
-      highlight: "professional polish",
-      description: "it deserves. Connect with our expert editors and elevate your writing today."
+      title: "Your Book Might Be Finished - But Is It Ready To",
+      highlight: "Publish?",
+      description: "Professional book editing services can make the difference between a good manuscript and a polished, reader-ready book. Our editors help strengthen clarity, flow, grammar, and overall readability while keeping your voice completely intact."
     }
   },
   {

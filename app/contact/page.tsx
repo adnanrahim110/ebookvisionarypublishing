@@ -2,26 +2,23 @@ import type { Metadata } from "next";
 
 import { ContactSection } from "@/components/home/contact-section";
 import { PageHero } from "@/components/shared/page-hero";
+import { getContactPage } from "@/sanity/lib/content";
+import { metadataFromSeo } from "@/sanity/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Contact Us | Ebook Visionary Publishing",
-  description:
-    "Get in touch with Ebook Visionary Publishing. Reach out for a free consultation, send us an inquiry, or visit our office in Dallas, TX.",
-};
+export const revalidate = 60;
 
-export default function ContactPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getContactPage();
+  return metadataFromSeo(page.seo);
+}
+
+export default async function ContactPage() {
+  const page = await getContactPage();
+
   return (
     <>
-      <PageHero
-        title="Let's Bring Your Vision to Life."
-        subtitle="Whether you have a question, need a quote, or want to discuss your manuscript — our team is here to help."
-        label="Contact Us"
-        breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Contact Us" },
-        ]}
-      />
-      <ContactSection />
+      <PageHero {...page.hero} />
+      <ContactSection content={page.contact} />
     </>
   );
 }

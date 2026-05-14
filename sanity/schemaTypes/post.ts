@@ -47,6 +47,17 @@ export const post = defineType({
       type: 'datetime',
     }),
     defineField({
+      name: 'excerpt',
+      title: 'Excerpt',
+      type: 'text',
+      rows: 3,
+    }),
+    defineField({
+      name: 'readTime',
+      title: 'Read Time (minutes)',
+      type: 'number',
+    }),
+    defineField({
       name: 'body',
       title: 'Body',
       type: 'array',

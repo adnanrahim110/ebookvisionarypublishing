@@ -23,9 +23,66 @@ export type DummyPost = {
   readTime: number;
   metaTitle: string;
   metaDesc: string;
+  excerpt?: string;
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    metaKeywords?: string[];
+  };
   mainImage: { asset: { url: string } };
   author: { name: string };
   content: ContentSection[];
+  body?: unknown[];
+};
+
+export const BLOG_ARCHIVE_CONTENT = {
+  emptyLabel: "The Archive",
+  emptyHeading: "The shelf is being curated.",
+  emptyDescription:
+    "New articles from our editorial desk are on the way - please check back soon.",
+  eyebrow: "The Archive",
+  headingPrefix: "Stories from the",
+  headingEmphasis: "press room",
+  totalLabel: "Total Issues",
+  latestLabel: "Latest Edition",
+  spotlightLabel: "Spotlight",
+  latestBadge: "Latest Edition",
+  fallbackCategory: "Editorial",
+  featuredDescription:
+    "An editorial deep-dive from our publishing desk - read the full story, plus the pull-quotes, sources, and asides we couldn't fit into a tweet.",
+  authoredByLabel: "Authored by",
+  fallbackAuthor: "Editorial Team",
+  readLabel: "Read",
+  readingListLabel: "The Reading List",
+  storySingular: "Story",
+  storyPlural: "Stories",
+  issueLabel: "Issue",
+  featuredBroadsideLabel: "Featured Broadside",
+  readArticleLabel: "Read Article",
+  footerLabel: "End of Current Edition",
+};
+
+export const BLOG_DETAIL_CONTENT = {
+  backToArchiveLabel: "Back to Archive",
+  archiveLabel: "The Archive",
+  fallbackCategory: "Editorial",
+  issueLabel: "Issue",
+  readTimeLabel: "Read Time",
+  readTimeSuffix: "Min Read",
+  readTimeShortSuffix: "Min",
+  authoredByLabel: "Authored By",
+  fallbackAuthor: "Editorial Team",
+  scrollLabel: "Scroll to read",
+  shareLabel: "Share This",
+  copyLabel: "Copy",
+  copiedLabel: "Copied",
+  copyAriaLabel: "Copy link",
+  copiedAriaLabel: "Link copied",
+  backToTopLabel: "Back to Top",
+  endLabel: "End of Article",
+  endDescription:
+    "Thanks for reading. Browse more dispatches, columns, and editorial deep-dives in the archive.",
+  returnToLabel: "Return to",
 };
 
 export const DUMMY_POSTS: DummyPost[] = [

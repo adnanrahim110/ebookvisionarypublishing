@@ -29,11 +29,26 @@ export interface CtaData {
   description: string;
 }
 
+export interface TestimonialData {
+  name: string;
+  role: string;
+  content: string;
+}
+
+export interface SeoData {
+  metaTitle?: string;
+  metaDescription?: string;
+  metaKeywords?: string[];
+}
+
 export interface ServiceData {
   slug: string;
   title: string;
+  heroTitle?: string;
+  heroSubtitle?: string;
   subtitle: string;
   icon: string;
+  seo?: SeoData;
   
   overviewLabel?: string;
   overviewHeading?: string;
@@ -53,6 +68,7 @@ export interface ServiceData {
   process?: ProcessStep[];
 
   stats?: Stat[];
+  testimonials?: TestimonialData[];
   faqs?: Faq[];
   cta?: CtaData;
 }

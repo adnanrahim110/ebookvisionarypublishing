@@ -6,29 +6,26 @@ import { StorySection } from "@/components/about/story-section";
 import { StrengthsSection } from "@/components/about/strengths-section";
 import { PageHero } from "@/components/shared/page-hero";
 import { CTABanner } from "@/components/shared/cta-banner";
+import { getAboutPage } from "@/sanity/lib/content";
+import { metadataFromSeo } from "@/sanity/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "About Us | Ebook Visionary Publishing",
-  description:
-    "Learn about Ebook Visionary Publishing, our premium editorial approach, and how we empower authors to share their stories with the world.",
-};
+export const revalidate = 60;
 
-export default function AboutPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getAboutPage();
+  return metadataFromSeo(page.seo);
+}
+
+export default async function AboutPage() {
+  const page = await getAboutPage();
+
   return (
     <>
-      <PageHero
-        title="Get to Know Ebook Visionary Publishing."
-        subtitle="Ebook Visionary is where great books begin and successful authors are made. We deliver everything you need to publish with confidence."
-        label="About Us"
-        breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "About Us" },
-        ]}
-      />
-      <StorySection />
-      <MissionVisionSection />
-      <StrengthsSection />
-      <ProcessSection />
+      <PageHero {...page.hero} />
+      <StorySection content={page.story} />
+      <MissionVisionSection content={page.missionVision} />
+      <StrengthsSection content={page.strengths} />
+      <ProcessSection content={page.process} />
       <CTABanner />
     </>
   );

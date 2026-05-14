@@ -1,23 +1,28 @@
 "use client";
+
 import { ServiceCard } from "@/components/shared/service-card";
 import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
 import { Section } from "@/components/ui/section";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Text } from "@/components/ui/text";
-import { SERVICES } from "@/constants";
+import { SERVICES, SERVICES_OVERVIEW_CONTENT } from "@/constants";
 
 interface ServicesOverviewProps {
   services?: any[];
+  content?: typeof SERVICES_OVERVIEW_CONTENT;
 }
 
-export function ServicesOverview({ services = [] }: ServicesOverviewProps) {
+export function ServicesOverview({
+  services = [],
+  content = SERVICES_OVERVIEW_CONTENT,
+}: ServicesOverviewProps) {
   const displayServices =
     services.length > 0
       ? services.map((s) => ({
           title: s.title,
-          description: s.description,
-          href: s.slug?.current ? `/services/${s.slug.current}` : "#",
+          description: s.description || s.subtitle,
+          href: s.slug?.current ? `/${s.slug.current}` : s.href || "#",
           icon: s.icon || "feather",
         }))
       : SERVICES;
@@ -29,14 +34,13 @@ export function ServicesOverview({ services = [] }: ServicesOverviewProps) {
       <Container className="relative">
         <div className="text-center mb-20 flex flex-col items-center">
           <SectionLabel className="mb-5 text-secondary-400">
-            Our Expertise
+            {content.label}
           </SectionLabel>
           <Heading as="h2" size="h2" className="mb-4 justify-center text-white">
-            Everything You Need to Become a Bestseller.
+            {content.heading}
           </Heading>
-          <Text size="lg" className="text-primary-100/70">
-            From first draft to global distribution — our full suite of
-            publishing services covers every step of your journey.
+          <Text size="lg" className="text-primary-100/70 max-w-4xl mx-auto">
+            {content.description}
           </Text>
         </div>
 

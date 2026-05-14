@@ -2,10 +2,11 @@ import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
 import {
-  ADDRESS,
   COMPANY_NAME,
   CONTACT_EMAIL,
   CONTACT_PHONE,
+  FOOTER_CONTENT,
+  GLOBAL_SETTINGS,
   NAV_LINKS,
   SERVICES,
 } from "@/constants";
@@ -49,12 +50,29 @@ function AnimatedFooterLink({ text, href }: { text: string; href: string }) {
   );
 }
 
-export function Footer() {
+type FooterSettings = typeof GLOBAL_SETTINGS;
+type NavLink = (typeof NAV_LINKS)[0];
+type ServiceLink = (typeof SERVICES)[0];
+
+export function Footer({
+  settings = GLOBAL_SETTINGS,
+  navLinks = NAV_LINKS,
+  services = SERVICES,
+}: {
+  settings?: FooterSettings;
+  navLinks?: NavLink[];
+  services?: ServiceLink[];
+}) {
+  const footer = settings.footer || FOOTER_CONTENT;
+  const companyName = settings.companyName || COMPANY_NAME;
+  const contactEmail = settings.contactEmail || CONTACT_EMAIL;
+  const contactPhone = settings.contactPhone || CONTACT_PHONE;
+
   return (
     <footer className="bg-primary-950 text-white relative overflow-hidden pt-24 pb-6">
       <div className="absolute -bottom-1/10 left-0 w-full overflow-hidden flex justify-center pointer-events-none select-none opacity-[0.03] z-0">
         <span className="font-heading font-black text-[20vw] leading-none whitespace-nowrap text-white tracking-tighter">
-          VISIONARY.
+          {footer.watermark}
         </span>
       </div>
 
@@ -64,36 +82,36 @@ export function Footer() {
             <div>
               <Link href="/" className="inline-block mb-8">
                 <span className="font-heading text-5xl lg:text-6xl font-bold text-white tracking-tight flex items-baseline">
-                  EVP<span className="text-secondary-500">.</span>
+                  {footer.brandMark}
+                  <span className="text-secondary-500">.</span>
                 </span>
               </Link>
               <Text
                 size="lg"
                 className="text-white/70 font-light leading-relaxed max-w-sm mb-12"
               >
-                Thoughtfully crafted, beautifully produced. We bring your story
-                to life with premium publishing support from start to finish.
+                {footer.description}
               </Text>
             </div>
 
             <div className="flex flex-col gap-4">
               <a
-                href={`mailto:${CONTACT_EMAIL}`}
+                href={`mailto:${contactEmail}`}
                 className="group inline-flex items-center gap-5 text-white/80 hover:text-white transition-colors w-fit"
               >
                 <span className="w-12 h-12 rounded-full border border-white/10 group-hover:border-secondary-500 group-hover:bg-secondary-500/10 flex items-center justify-center transition-all duration-500">
                   <Mail className="w-4 h-4 text-secondary-500" />
                 </span>
-                <span className="font-body text-lg">{CONTACT_EMAIL}</span>
+                <span className="font-body text-lg">{contactEmail}</span>
               </a>
               <a
-                href={`tel:${CONTACT_PHONE.replace(/[^0-9+]/g, "")}`}
+                href={`tel:${contactPhone.replace(/[^0-9+]/g, "")}`}
                 className="group inline-flex items-center gap-5 text-white/80 hover:text-white transition-colors w-fit"
               >
                 <span className="w-12 h-12 rounded-full border border-white/10 group-hover:border-secondary-500 group-hover:bg-secondary-500/10 flex items-center justify-center transition-all duration-500">
                   <Phone className="w-4 h-4 text-secondary-500" />
                 </span>
-                <span className="font-body text-lg">{CONTACT_PHONE}</span>
+                <span className="font-body text-lg">{contactPhone}</span>
               </a>
             </div>
           </div>
@@ -104,10 +122,10 @@ export function Footer() {
               size="h6"
               className="text-white/40 uppercase tracking-widest text-xs mb-5 font-mono"
             >
-              Navigation
+              {footer.navigationLabel}
             </Heading>
             <ul className="flex flex-col gap-6">
-              {NAV_LINKS.map((link) => (
+              {navLinks.map((link) => (
                 <li key={link.label}>
                   <AnimatedFooterLink text={link.label} href={link.href} />
                 </li>
@@ -121,10 +139,10 @@ export function Footer() {
               size="h6"
               className="text-white/40 uppercase tracking-widest text-xs mb-5 font-mono"
             >
-              Specialized Services
+              {footer.servicesLabel}
             </Heading>
             <ul className="flex flex-col gap-6">
-              {SERVICES.slice(0, 5).map((service) => (
+              {services.slice(0, 5).map((service) => (
                 <li key={service.title}>
                   <AnimatedFooterLink
                     text={service.title}
@@ -142,21 +160,18 @@ export function Footer() {
             size="sm"
             className="text-white/50 font-mono tracking-widest uppercase text-[10px] md:text-xs"
           >
-            © {new Date().getFullYear()} {COMPANY_NAME}. All rights reserved.
+            © {new Date().getFullYear()} {companyName}. {footer.copyrightSuffix}
           </Text>
           <div className="flex gap-8">
-            <Link
-              href="/legals/privacy-policy"
-              className="text-white/50 hover:text-secondary-400 text-[10px] md:text-xs font-mono tracking-widest uppercase transition-colors"
-            >
-              Privacy Policy
-            </Link>
-            <Link
-              href="/legals/terms-and-conditions"
-              className="text-white/50 hover:text-secondary-400 text-[10px] md:text-xs font-mono tracking-widest uppercase transition-colors"
-            >
-              Terms & Conditions
-            </Link>
+            {footer.legalLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-white/50 hover:text-secondary-400 text-[10px] md:text-xs font-mono tracking-widest uppercase transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
         </div>
       </Container>

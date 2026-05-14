@@ -9,7 +9,8 @@ import { Container } from "@/components/ui/container";
 import { useReducedMotion } from "@/utils/use-reduced-motion";
 import { cn } from "@/utils/cn";
 import { DummyContentRenderer } from "@/components/blog/dummy-content-renderer";
-import type { ContentSection } from "@/constants/blogs";
+import { BLOG_DETAIL_CONTENT, type ContentSection } from "@/constants/blogs";
+import { urlForImage } from "@/sanity/lib/image";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -18,7 +19,9 @@ interface BlogArticleSectionProps {
   author?: { name: string; imageUrl?: string };
   readTime?: number;
   content?: ContentSection[];
+  portableContent?: unknown[];
   fallback?: React.ReactNode;
+  labels?: typeof BLOG_DETAIL_CONTENT;
 }
 
 export function BlogArticleSection({
@@ -26,7 +29,9 @@ export function BlogArticleSection({
   author,
   readTime,
   content,
+  portableContent,
   fallback,
+  labels = BLOG_DETAIL_CONTENT,
 }: BlogArticleSectionProps) {
   const shouldReduceMotion = useReducedMotion();
   const articleRef = React.useRef<HTMLDivElement>(null);
@@ -82,6 +87,7 @@ export function BlogArticleSection({
                   author={author}
                   title={title}
                   minutes={minutes}
+                  labels={labels}
                 />
               </aside>
 
@@ -90,16 +96,19 @@ export function BlogArticleSection({
                   author={author}
                   minutes={minutes}
                   title={title}
+                  labels={labels}
                 />
 
-                {content ? (
+                {Array.isArray(portableContent) && portableContent.length > 0 ? (
+                  <PortableContentRenderer value={portableContent} />
+                ) : content ? (
                   <DummyContentRenderer content={content} />
                 ) : (
                   fallback
                 )}
 
                 <ArticleEndmark />
-                <ArticleFooter />
+                <ArticleFooter labels={labels} />
               </div>
             </div>
           </Container>
@@ -109,20 +118,141 @@ export function BlogArticleSection({
   );
 }
 
+function PortableContentRenderer({ value }: { value: unknown[] }) {
+  return (
+    <div className="font-body text-neutral-700 text-base md:text-[1.05rem] leading-[1.8]">
+      {value.map((block, index) => (
+        <PortableBlock key={index} block={block} index={index} />
+      ))}
+    </div>
+  );
+}
+
+function PortableBlock({ block, index }: { block: any; index: number }) {
+  if (!block || typeof block !== "object") return null;
+
+  if (block._type === "image") {
+    const src = urlForImage(block)?.width(1200).url();
+    if (!src) return null;
+
+    return (
+      <figure className="my-10 md:my-14 max-w-4xl">
+        <div className="relative aspect-16/9 overflow-hidden rounded-3xl border border-primary-950/10 bg-primary-100">
+          <Image
+            src={src}
+            alt={block.alt || ""}
+            fill
+            sizes="(max-width: 768px) 100vw, 900px"
+            className="object-cover"
+          />
+        </div>
+        {block.caption && (
+          <figcaption className="mt-3 text-xs text-primary-700/55">
+            {block.caption}
+          </figcaption>
+        )}
+      </figure>
+    );
+  }
+
+  if (block._type !== "block") return null;
+
+  const children = (
+    <>
+      {block.children?.map((child: any, childIndex: number) => (
+        <PortableSpan
+          key={child._key || childIndex}
+          child={child}
+          markDefs={block.markDefs || []}
+        />
+      ))}
+    </>
+  );
+
+  if (block.listItem) {
+    return (
+      <ul className="my-6 md:my-8 space-y-3 max-w-3xl list-disc pl-6 marker:text-secondary-500">
+        <li>{children}</li>
+      </ul>
+    );
+  }
+
+  if (block.style === "h2") {
+    return (
+      <h2 className="font-heading font-medium text-2xl md:text-3xl lg:text-[2.25rem] text-primary-950 leading-[1.15] tracking-tight max-w-3xl mt-12 mb-6">
+        {children}
+      </h2>
+    );
+  }
+
+  if (block.style === "h3") {
+    return (
+      <h3 className="font-heading font-semibold text-xl md:text-2xl text-primary-950 leading-tight max-w-3xl mt-10 mb-5">
+        {children}
+      </h3>
+    );
+  }
+
+  if (block.style === "blockquote") {
+    return (
+      <blockquote className="relative my-12 md:my-16 max-w-3xl pl-6 md:pl-10 border-l-2 border-secondary-400/70">
+        <p className="font-heading font-medium text-xl md:text-2xl lg:text-[1.7rem] leading-[1.35] text-neutral-900 italic tracking-tight">
+          {children}
+        </p>
+      </blockquote>
+    );
+  }
+
+  return (
+    <p className="mb-6 md:mb-7 max-w-3xl">
+      {index === 0 ? <FirstPortableParagraph>{children}</FirstPortableParagraph> : children}
+    </p>
+  );
+}
+
+function FirstPortableParagraph({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
+}
+
+function PortableSpan({ child, markDefs }: { child: any; markDefs: any[] }) {
+  let node: React.ReactNode = child.text || "";
+
+  for (const mark of child.marks || []) {
+    const markDef = markDefs.find((def) => def._key === mark);
+
+    if (mark === "strong") node = <strong className="font-semibold text-neutral-900">{node}</strong>;
+    if (mark === "em") node = <em className="italic text-neutral-600 font-normal">{node}</em>;
+    if (markDef?._type === "link" && markDef.href) {
+      node = (
+        <Link
+          href={markDef.href}
+          className="font-medium text-neutral-900 underline decoration-secondary-300 underline-offset-4 hover:text-primary-700"
+        >
+          {node}
+        </Link>
+      );
+    }
+  }
+
+  return <>{node}</>;
+}
+
 function ArticleAside({
   author,
   title,
   minutes,
+  labels,
 }: {
   author?: { name: string; imageUrl?: string };
   title: string;
   minutes: number;
+  labels: typeof BLOG_DETAIL_CONTENT;
 }) {
   return (
     <div className="flex flex-col gap-9 pb-4">
       <div>
         <span className="block text-[9px] font-bold uppercase tracking-[0.3em] text-primary-700/50 mb-3">
-          Authored By
+          {labels.authoredByLabel}
         </span>
         <div className="flex items-center gap-3">
           {author?.imageUrl ? (
@@ -136,37 +266,39 @@ function ArticleAside({
             </div>
           ) : (
             <div className="w-11 h-11 rounded-full bg-primary-950 text-white flex items-center justify-center font-heading font-bold shadow-md">
-              {(author?.name || "EVP").charAt(0)}
+              {(author?.name || labels.fallbackAuthor).charAt(0)}
             </div>
           )}
           <span className="text-sm font-medium text-primary-950 leading-tight">
-            {author?.name || "Editorial Team"}
+            {author?.name || labels.fallbackAuthor}
           </span>
         </div>
       </div>
 
       <div>
         <span className="block text-[9px] font-bold uppercase tracking-[0.3em] text-primary-700/50 mb-2">
-          Read Time
+          {labels.readTimeLabel}
         </span>
         <div className="flex items-baseline gap-1.5 text-primary-950">
           <Clock3 className="w-4 h-4 text-primary-500 self-center" />
           <span className="font-heading font-medium text-2xl tabular-nums leading-none">
             {minutes}
           </span>
-          <span className="text-xs text-primary-700/55">min</span>
+          <span className="text-xs text-primary-700/55">
+            {labels.readTimeShortSuffix.toLowerCase()}
+          </span>
         </div>
       </div>
 
       <div>
         <span className="block text-[9px] font-bold uppercase tracking-[0.3em] text-primary-700/50 mb-3">
-          Share This
+          {labels.shareLabel}
         </span>
-        <ShareGroup title={title} />
+        <ShareGroup title={title} labels={labels} />
       </div>
 
       <div className="pt-7 border-t border-primary-950/10">
-        <BackToTopButton />
+        <BackToTopButton labels={labels} />
       </div>
     </div>
   );
@@ -176,10 +308,12 @@ function MobileMeta({
   author,
   minutes,
   title,
+  labels,
 }: {
   author?: { name: string; imageUrl?: string };
   minutes: number;
   title: string;
+  labels: typeof BLOG_DETAIL_CONTENT;
 }) {
   return (
     <div className="lg:hidden mb-10 pb-8 border-b border-primary-950/10 flex flex-wrap items-center justify-between gap-6">
@@ -195,15 +329,15 @@ function MobileMeta({
           </div>
         ) : (
           <div className="w-10 h-10 rounded-full bg-primary-950 text-white flex items-center justify-center text-sm font-heading font-bold shadow-md">
-            {(author?.name || "EVP").charAt(0)}
+            {(author?.name || labels.fallbackAuthor).charAt(0)}
           </div>
         )}
         <div className="flex flex-col">
           <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-primary-700/55">
-            Authored By
+            {labels.authoredByLabel}
           </span>
           <span className="text-sm font-medium text-primary-950 mt-0.5">
-            {author?.name || "Editorial Team"}
+            {author?.name || labels.fallbackAuthor}
           </span>
         </div>
       </div>
@@ -212,11 +346,11 @@ function MobileMeta({
         <div className="flex items-center gap-1.5 text-primary-700/65">
           <Clock3 className="w-3.5 h-3.5" />
           <span className="text-[10px] font-bold uppercase tracking-[0.25em]">
-            {minutes} Min
+            {minutes} {labels.readTimeShortSuffix}
           </span>
         </div>
         <div className="hidden sm:block">
-          <ShareGroup title={title} compact />
+          <ShareGroup title={title} compact labels={labels} />
         </div>
       </div>
     </div>
@@ -226,9 +360,11 @@ function MobileMeta({
 function ShareGroup({
   title,
   compact = false,
+  labels,
 }: {
   title: string;
   compact?: boolean;
+  labels: typeof BLOG_DETAIL_CONTENT;
 }) {
   const [copied, setCopied] = React.useState(false);
   const [url, setUrl] = React.useState("");
@@ -286,7 +422,7 @@ function ShareGroup({
       <button
         type="button"
         onClick={handleCopy}
-        aria-label={copied ? "Link copied" : "Copy link"}
+        aria-label={copied ? labels.copiedAriaLabel : labels.copyAriaLabel}
         className={cn(
           "group/copy relative inline-flex items-center justify-center rounded-full border border-primary-950/15 bg-white text-primary-950 font-heading font-bold transition-[background-color,color,border-color,box-shadow,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-primary-950 hover:text-white hover:border-primary-950 hover:shadow-[0_12px_28px_-10px_rgba(6,48,75,0.35)] hover:-translate-y-0.5 outline-none focus-visible:bg-primary-950 focus-visible:text-white",
           size,
@@ -298,7 +434,7 @@ function ShareGroup({
           <span className="leading-none tracking-tight">↗</span>
         )}
         <span className="absolute -bottom-7 left-1/2 -translate-x-1/2 text-[9px] font-bold uppercase tracking-[0.25em] text-primary-700/65 opacity-0 group-hover/copy:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">
-          {copied ? "Copied" : "Copy"}
+          {copied ? labels.copiedLabel : labels.copyLabel}
         </span>
       </button>
     </div>
@@ -332,7 +468,7 @@ function ShareTile({
   );
 }
 
-function BackToTopButton() {
+function BackToTopButton({ labels }: { labels: typeof BLOG_DETAIL_CONTENT }) {
   const handleClick = () => {
     if (typeof window === "undefined") return;
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -348,7 +484,7 @@ function BackToTopButton() {
         <ArrowUp className="w-3.5 h-3.5 transition-[color,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/top:text-white group-hover/top:-translate-y-0.5 group-focus-visible/top:text-white" />
       </span>
       <span className="relative">
-        Back to Top
+        {labels.backToTopLabel}
         <span className="absolute -bottom-1 left-0 right-0 h-px bg-primary-950 origin-left scale-x-0 group-hover/top:scale-x-100 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]" />
       </span>
     </button>
@@ -377,7 +513,7 @@ function ArticleEndmark() {
   );
 }
 
-function ArticleFooter() {
+function ArticleFooter({ labels }: { labels: typeof BLOG_DETAIL_CONTENT }) {
   const shouldReduceMotion = useReducedMotion();
   const ref = React.useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.3 });
@@ -392,11 +528,10 @@ function ArticleFooter() {
     >
       <div>
         <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-secondary-600 block mb-2">
-          End of Article
+          {labels.endLabel}
         </span>
         <p className="text-sm md:text-base text-neutral-600 leading-relaxed max-w-md">
-          Thanks for reading. Browse more dispatches, columns, and editorial
-          deep-dives in the archive.
+          {labels.endDescription}
         </p>
       </div>
 
@@ -409,10 +544,10 @@ function ArticleFooter() {
         </span>
         <span className="flex flex-col">
           <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary-700/55">
-            Return to
+            {labels.returnToLabel}
           </span>
           <span className="text-sm font-medium text-primary-950 mt-0.5 relative">
-            The Archive
+            {labels.archiveLabel}
             <span className="absolute -bottom-0.5 left-0 right-0 h-px bg-primary-950 origin-left scale-x-0 group-hover/back:scale-x-100 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]" />
           </span>
         </span>

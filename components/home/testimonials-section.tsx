@@ -7,12 +7,13 @@ import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
 import { Section } from "@/components/ui/section";
 import { SectionLabel } from "@/components/ui/section-label";
-import { TESTIMONIALS } from "@/constants";
+import { TESTIMONIALS, TESTIMONIALS_SECTION } from "@/constants";
 
 import "swiper/swiper.css";
 
 interface TestimonialsSectionProps {
   testimonials?: any[];
+  content?: typeof TESTIMONIALS_SECTION;
 }
 
 function ReviewCard({
@@ -94,6 +95,7 @@ function MarqueeRow({
 
 export function TestimonialsSection({
   testimonials = [],
+  content = TESTIMONIALS_SECTION,
 }: TestimonialsSectionProps) {
   const displayTestimonials =
     testimonials.length > 0
@@ -111,10 +113,10 @@ export function TestimonialsSection({
       <Container>
         <div className="text-center mb-16 flex flex-col items-center">
           <SectionLabel className="mb-4 text-secondary-400">
-            Testimonials
+            {content.label}
           </SectionLabel>
           <Heading as="h2" size="h2" className="text-white justify-center">
-            Why Authors Love Working With Us.
+            {content.heading}
           </Heading>
         </div>
       </Container>

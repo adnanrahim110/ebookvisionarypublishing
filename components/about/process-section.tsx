@@ -1,6 +1,12 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
-import { FileText, MessageSquare, Rocket, Wand2 } from "lucide-react";
+import {
+  FileText,
+  MessageSquare,
+  Rocket,
+  type LucideIcon,
+  Wand2,
+} from "lucide-react";
 import * as React from "react";
 
 import { Container } from "@/components/ui/container";
@@ -8,6 +14,7 @@ import { Heading } from "@/components/ui/heading";
 import { Section } from "@/components/ui/section";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Text } from "@/components/ui/text";
+import { ABOUT_PAGE } from "@/constants";
 import { cn } from "@/utils/cn";
 import { useReducedMotion } from "@/utils/use-reduced-motion";
 
@@ -18,44 +25,24 @@ function hexToRgba(hex: string, alpha: number) {
   return `rgba(${r},${g},${b},${alpha})`;
 }
 
-const processSteps = [
-  {
-    num: "01",
-    title: "Connect With Us",
-    description:
-      "The process begins with authors reaching out to us. We understand their needs and requirements for the book, ensuring we align perfectly with your creative vision.",
-    icon: MessageSquare,
-    accent: "#0ea5e9",
-  },
-  {
-    num: "02",
-    title: "Manuscript Submission",
-    description:
-      "After understanding the requirements, authors submit their manuscript for our professional team to review, analyze, and prepare a comprehensive strategy.",
-    icon: FileText,
-    accent: "#8b5cf6",
-  },
-  {
-    num: "03",
-    title: "Professional Touch",
-    description:
-      "Our experienced team applies their professional touch — whether it's editing, formatting, or cover design — to ensure the book meets the highest quality standards.",
-    icon: Wand2,
-    accent: "#f59e0b",
-  },
-  {
-    num: "04",
-    title: "Final Launch",
-    description:
-      "Once the book is polished and ready, we help authors launch their book on various platforms, ensuring it reaches their target audience with maximum impact.",
-    icon: Rocket,
-    accent: "#10b981",
-  },
-];
+const iconMap: Record<string, LucideIcon> = {
+  "message-square": MessageSquare,
+  "file-text": FileText,
+  "wand-2": Wand2,
+  rocket: Rocket,
+};
 
-export function ProcessSection() {
+export function ProcessSection({
+  content = ABOUT_PAGE.process,
+}: {
+  content?: typeof ABOUT_PAGE.process;
+}) {
   const [activeIndex, setActiveIndex] = React.useState(0);
   const shouldReduceMotion = useReducedMotion();
+  const processSteps = content.steps.map((step) => ({
+    ...step,
+    icon: iconMap[step.icon] || MessageSquare,
+  }));
 
   return (
     <Section spacing="lg" className="bg-primary-950 overflow-hidden relative">
@@ -69,10 +56,10 @@ export function ProcessSection() {
       <Container className="relative z-10">
         <div className="text-center mb-16 lg:mb-20 flex flex-col items-center">
           <SectionLabel className="mb-4 text-secondary-400">
-            Our Work In Action
+            {content.label}
           </SectionLabel>
           <Heading as="h2" size="h2" className="text-white justify-center">
-            How We Bring Your Book to Life.
+            {content.heading}
           </Heading>
         </div>
 

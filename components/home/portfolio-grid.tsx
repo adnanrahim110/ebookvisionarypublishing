@@ -8,62 +8,14 @@ import { Heading } from "@/components/ui/heading";
 import { Section } from "@/components/ui/section";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Text } from "@/components/ui/text";
+import { PORTFOLIO_BOOKS, PORTFOLIO_SECTION } from "@/constants";
 import { urlForImage } from "@/sanity/lib/image";
 
-const DUMMY_BOOKS = [
-  {
-    id: "1",
-    title: "The Last Horizon",
-    author: "Sarah Mitchell",
-    coverUrl: "/images/books/cover-1.png",
-  },
-  {
-    id: "2",
-    title: "Beyond The Pages",
-    author: "James Carter",
-    coverUrl: "/images/books/cover-2.png",
-  },
-  {
-    id: "3",
-    title: "Whispers of Ink",
-    author: "Elena Woods",
-    coverUrl: "/images/books/cover-3.png",
-  },
-  {
-    id: "4",
-    title: "Rising Tides",
-    author: "Marcus Hall",
-    coverUrl: "/images/books/cover-4.png",
-  },
-  {
-    id: "5",
-    title: "Silent Echoes",
-    author: "Diana Cross",
-    coverUrl: "/images/books/cover-5.png",
-  },
-  {
-    id: "6",
-    title: "The Garden Path",
-    author: "Thomas Reed",
-    coverUrl: "/images/books/cover-6.png",
-  },
-  {
-    id: "7",
-    title: "Paper Hearts",
-    author: "Lily Chen",
-    coverUrl: "/images/books/cover-7.png",
-  },
-  {
-    id: "8",
-    title: "Neon Nights",
-    author: "Jake Stone",
-    coverUrl: "/images/books/cover-8.png",
-  },
-];
-
 const CARD_W = 220;
-const CARD_STEP = 280;
+const CARD_STEP = 196;
 const VISIBLE_RANGE = 4;
+const COMMIT_PX = CARD_STEP * 0.2;
+const OVERDRAG_RESISTANCE = 0.15;
 
 function mod(n: number, m: number) {
   return ((n % m) + m) % m;
@@ -73,8 +25,20 @@ function clamp(val: number, min: number, max: number) {
   return Math.max(min, Math.min(max, val));
 }
 
+function shortestOffset(raw: number, count: number) {
+  const half = count / 2;
+  return mod(raw + half, count) - half;
+}
+
+interface DisplayBook {
+  id: string;
+  title: string;
+  author: string;
+  coverUrl: string | undefined;
+}
+
 interface BookSlideProps {
-  book: (typeof DUMMY_BOOKS)[0];
+  book: DisplayBook;
   offset: number;
 }
 
@@ -83,8 +47,8 @@ function BookSlide({ book, offset }: BookSlideProps) {
   const rotateY = clamp(offset * -40, -60, 60);
   const scale = Math.max(0.6, 1 - abs * 0.12);
   const z = -abs * 120;
-  const opacity = clamp(1 - abs * 0.2, 0, 1);
-  const x = offset * CARD_STEP * 0.7;
+  const opacity = clamp(1 - abs * 0.22, 0, 1);
+  const x = offset * CARD_STEP;
 
   return (
     <div
@@ -92,9 +56,10 @@ function BookSlide({ book, offset }: BookSlideProps) {
       style={{
         width: CARD_W,
         marginLeft: -CARD_W / 2,
-        transform: `translateX(${x}px) translateZ(${z}px) rotateY(${rotateY}deg) scale(${scale})`,
+        transform: `translate3d(${x}px, 0, ${z}px) rotateY(${rotateY}deg) scale(${scale})`,
         opacity,
         zIndex: 10 - Math.round(abs * 2),
+        willChange: "transform, opacity",
       }}
     >
       <div className="relative group">
@@ -104,7 +69,7 @@ function BookSlide({ book, offset }: BookSlideProps) {
         />
         <div className="relative aspect-2/3 rounded-lg overflow-hidden shadow-xl ring-1 ring-black/5 transition-transform duration-300 group-hover:scale-[1.02]">
           <Image
-            src={book.coverUrl}
+            src={book.coverUrl || "/images/books/cover-1.png"}
             alt={book.title}
             fill
             className="object-cover pointer-events-none"
@@ -127,106 +92,136 @@ function BookSlide({ book, offset }: BookSlideProps) {
 }
 
 interface PortfolioGridProps {
-  books?: any[];
+  books?: {
+    _id?: string;
+    title: string;
+    author: string;
+    coverImage?: unknown;
+    coverUrl?: string;
+  }[];
+  content?: typeof PORTFOLIO_SECTION;
 }
 
-export function PortfolioGrid({ books = [] }: PortfolioGridProps) {
-  const displayBooks =
-    books.length > 0
-      ? books.map((b) => ({
-          id: b._id,
-          title: b.title,
-          author: b.author,
-          coverUrl: b.coverImage
-            ? urlForImage(b.coverImage)?.url()
-            : "/images/books/cover-1.png",
-        }))
-      : DUMMY_BOOKS;
+export function PortfolioGrid({
+  books = [],
+  content = PORTFOLIO_SECTION,
+}: PortfolioGridProps) {
+  const displayBooks: DisplayBook[] = React.useMemo(() => {
+    if (books.length > 0) {
+      return books.map((b, index) => ({
+        id: b._id ?? `portfolio-book-${index}`,
+        title: b.title,
+        author: b.author,
+        coverUrl: b.coverImage
+          ? urlForImage(b.coverImage)?.url()
+          : b.coverUrl || "/images/books/cover-1.png",
+      }));
+    }
+    return PORTFOLIO_BOOKS.map((b, i) => ({
+      id: `local-book-${i}`,
+      title: b.title,
+      author: b.author,
+      coverUrl: b.coverUrl,
+    }));
+  }, [books]);
 
   const count = displayBooks.length;
-  const x = useMotionValue(0);
-  const [renderPos, setRenderPos] = React.useState(0);
-  const isDragging = React.useRef(false);
-  const dragStartX = React.useRef(0);
-  const dragStartVal = React.useRef(0);
-  const prevPointer = React.useRef({ x: 0, t: 0 });
-  const velRef = React.useRef(0);
 
-  useMotionValueEvent(x, "change", (v) => setRenderPos(v));
+  const [activeIdx, setActiveIdx] = React.useState(0);
+  const dragX = useMotionValue(0);
+  const [dragPx, setDragPx] = React.useState(0);
+  useMotionValueEvent(dragX, "change", setDragPx);
+
+  const isDragging = React.useRef(false);
+  const startClientX = React.useRef(0);
+  const startDragX = React.useRef(0);
 
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (count <= 1) return;
     isDragging.current = true;
-    dragStartX.current = e.clientX;
-    dragStartVal.current = x.get();
-    prevPointer.current = { x: e.clientX, t: Date.now() };
-    velRef.current = 0;
-    x.stop();
+    dragX.stop();
+    startClientX.current = e.clientX;
+    startDragX.current = dragX.get();
     e.currentTarget.setPointerCapture(e.pointerId);
   };
 
   const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!isDragging.current) return;
-    const dx = e.clientX - dragStartX.current;
-    const now = Date.now();
-    const dt = now - prevPointer.current.t;
-    if (dt > 4) {
-      velRef.current = (e.clientX - prevPointer.current.x) / dt;
-      prevPointer.current = { x: e.clientX, t: now };
+    const dx = e.clientX - startClientX.current;
+
+    let constrained = dx;
+    if (Math.abs(dx) > CARD_STEP) {
+      const sign = Math.sign(dx);
+      const excess = Math.abs(dx) - CARD_STEP;
+      constrained = sign * (CARD_STEP + excess * OVERDRAG_RESISTANCE);
     }
-    x.set(dragStartVal.current + dx / CARD_STEP);
+
+    dragX.set(startDragX.current + constrained);
+  };
+
+  const commitStep = (step: -1 | 0 | 1) => {
+    const targetDragX = step * CARD_STEP;
+    animate(dragX, targetDragX, {
+      type: "spring",
+      stiffness: 380,
+      damping: 40,
+      mass: 0.9,
+      onComplete: () => {
+        if (step !== 0) {
+          setActiveIdx((prev) => mod(prev - step, count));
+        }
+        dragX.set(0);
+      },
+    });
   };
 
   const onPointerUp = () => {
     if (!isDragging.current) return;
     isDragging.current = false;
-    const v = velRef.current;
-    const current = x.get();
-    const projected = current + v * 1.2;
-    const snapped = Math.round(projected);
-    const maxJump = 2;
-    const clamped =
-      Math.round(clamp(snapped - Math.round(current), -maxJump, maxJump)) +
-      Math.round(current);
-    animate(x, clamped, {
-      type: "spring",
-      stiffness: 300,
-      damping: 35,
-      mass: 0.8,
-    });
+
+    const current = dragX.get();
+    let step: -1 | 0 | 1 = 0;
+    if (current > COMMIT_PX) step = 1;
+    else if (current < -COMMIT_PX) step = -1;
+
+    commitStep(step);
   };
 
-  const goTo = (idx: number) => {
-    const currentCenter = Math.round(-x.get());
-    const currentMod = mod(currentCenter, count);
-    let delta = idx - currentMod;
+  const goTo = (target: number) => {
+    if (count <= 1 || target === activeIdx) return;
+
+    let delta = target - activeIdx;
     if (delta > count / 2) delta -= count;
     if (delta < -count / 2) delta += count;
-    animate(x, x.get() - delta, {
+    if (delta === 0) return;
+
+    dragX.stop();
+    const targetDragX = -delta * CARD_STEP;
+
+    animate(dragX, targetDragX, {
       type: "spring",
-      stiffness: 250,
-      damping: 32,
+      stiffness: 260,
+      damping: 34,
+      mass: 1,
+      onComplete: () => {
+        setActiveIdx(target);
+        dragX.set(0);
+      },
     });
   };
 
-  const activeIdx = mod(Math.round(-renderPos), count);
-
-  const slots = React.useMemo(() => {
-    const arr: number[] = [];
-    for (let s = -VISIBLE_RANGE; s <= VISIBLE_RANGE; s++) arr.push(s);
-    return arr;
-  }, []);
+  const dragOffset = count > 0 ? dragPx / CARD_STEP : 0;
 
   return (
     <Section spacing="lg" className="bg-white overflow-hidden">
       <Container>
-        <div className="text-center max-w-2xl mx-auto mb-16 flex flex-col items-center">
-          <SectionLabel className="mb-5">Portfolio</SectionLabel>
+        <div className="text-center max-w-4xl mx-auto mb-16 flex flex-col items-center">
+          <SectionLabel className="mb-5">{content.label}</SectionLabel>
           <Heading as="h2" size="h2" className="mb-4 justify-center">
-            Recent Masterpieces.
+            {content.heading}
           </Heading>
           <Text size="lg" className="text-primary-600/70">
-            A showcase of books we have helped bring to life — from concept to
-            publication.
+            {content.description}
           </Text>
         </div>
       </Container>
@@ -240,23 +235,13 @@ export function PortfolioGrid({ books = [] }: PortfolioGridProps) {
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerUp}
         >
-          {slots.map((slot) => {
-            const fractional = renderPos + Math.round(-renderPos) + slot;
-            const offset = renderPos - Math.round(-renderPos) + fractional;
-            const realOffset =
-              renderPos + mod(Math.round(-renderPos) + slot, count);
-            const bookIdx = mod(Math.round(-renderPos) + slot, count);
-            const visualOffset = slot + (renderPos - Math.round(-renderPos));
+          {displayBooks.map((book, bookIdx) => {
+            const raw = bookIdx - activeIdx + dragOffset;
+            const offset = shortestOffset(raw, count);
 
-            if (Math.abs(visualOffset) > VISIBLE_RANGE) return null;
+            if (Math.abs(offset) > VISIBLE_RANGE) return null;
 
-            return (
-              <BookSlide
-                key={`slot-${slot}`}
-                book={displayBooks[bookIdx]}
-                offset={visualOffset}
-              />
-            );
+            return <BookSlide key={book.id} book={book} offset={offset} />;
           })}
         </div>
 
@@ -269,6 +254,7 @@ export function PortfolioGrid({ books = [] }: PortfolioGridProps) {
           <button
             key={i}
             onClick={() => goTo(i)}
+            aria-label={`Go to slide ${i + 1}`}
             className={`h-1.5 rounded-full transition-all duration-300 ${
               i === activeIdx
                 ? "w-8 bg-primary-500"

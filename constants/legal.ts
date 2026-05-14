@@ -7,10 +7,24 @@ export interface LegalSection {
 export interface LegalData {
   slug: string;
   title: string;
+  pageLabel?: string;
   lastUpdated: string;
+  lastUpdatedLabel?: string;
+  tableOfContentsLabel?: string;
   intro: string;
   sections: LegalSection[];
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    metaKeywords?: string[];
+  };
 }
+
+export const LEGAL_PAGE_CONTENT = {
+  pageLabel: "Legal Documents",
+  lastUpdatedLabel: "Last Updated",
+  tableOfContentsLabel: "Table of Contents",
+};
 
 export const LEGAL_DATA: LegalData[] = [
   {

@@ -7,42 +7,28 @@ import { Heading } from "@/components/ui/heading";
 import { Section } from "@/components/ui/section";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Text } from "@/components/ui/text";
+import { ABOUT_PAGE } from "@/constants";
 import { cn } from "@/utils/cn";
 import { useReducedMotion } from "@/utils/use-reduced-motion";
 
-export function MissionVisionSection() {
+export function MissionVisionSection({
+  content = ABOUT_PAGE.missionVision,
+}: {
+  content?: typeof ABOUT_PAGE.missionVision;
+}) {
   const shouldReduceMotion = useReducedMotion();
   const mRef = React.useRef<HTMLDivElement>(null);
   const vRef = React.useRef<HTMLDivElement>(null);
   const mInView = useInView(mRef, { once: true, amount: 0.2 });
   const vInView = useInView(vRef, { once: true, amount: 0.2 });
 
-  const panels = [
-    {
-      ref: mRef,
-      inView: mInView,
-      num: "01",
-      label: "Our Mission",
-      heading: "Empowering Authors to Publish With Excellence.",
-      body: "At Ebook Visionary, our mission is to empower authors by providing top-tier publishing services that turn creative visions into reality. We are dedicated to excellence, innovation, and integrity, ensuring every book we touch meets the highest standards of quality. Our goal is to simplify the publishing process, making it accessible and rewarding for writers of all backgrounds.",
-      gradient: "from-amber-700 via-amber-600 to-yellow-600",
-      circleColor: "bg-white/[0.04]",
-      delay: 0,
-      offsetClass: "lg:mt-0",
-    },
-    {
-      ref: vRef,
-      inView: vInView,
-      num: "02",
-      label: "Our Vision",
-      heading: "Redefining the Future of Independent Publishing.",
-      body: "Our vision is to be the global leader in independent publishing, known for our unwavering commitment to author success and literary excellence. We envision a world where every story has the opportunity to be told and every writer can find their audience. By leveraging cutting-edge technology and a team of passionate experts, we aim to redefine the publishing landscape.",
-      gradient: "from-[#064e3b] via-[#047857] to-[#059669]",
-      circleColor: "bg-white/[0.04]",
-      delay: 0.15,
-      offsetClass: "lg:mt-20",
-    },
-  ];
+  const panels = content.panels.map((panel, index) => ({
+    ...panel,
+    ref: index === 0 ? mRef : vRef,
+    inView: index === 0 ? mInView : vInView,
+    circleColor: "bg-white/[0.04]",
+    delay: index * 0.15,
+  }));
 
   return (
     <Section spacing="lg" className="bg-primary-900 overflow-hidden relative">
@@ -52,18 +38,17 @@ export function MissionVisionSection() {
         <div className="flex flex-col md:flex-row justify-between items-start mb-16 gap-6">
           <div className="max-w-xl">
             <SectionLabel className="mb-5 text-secondary-400">
-              What Drives Us
+              {content.label}
             </SectionLabel>
             <Heading as="h2" size="h2" className="text-white">
-              Purpose & Perspective.
+              {content.heading}
             </Heading>
           </div>
           <Text
             size="lg"
             className="max-w-sm text-primary-200/60 leading-relaxed md:pt-10"
           >
-            The foundation of everything we do — clarity of purpose, boldness of
-            vision.
+            {content.description}
           </Text>
         </div>
 

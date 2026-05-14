@@ -25,7 +25,7 @@ import { usePathname } from "next/navigation";
 import * as React from "react";
 
 import { Container } from "@/components/ui/container";
-import { NAV_LINKS, SERVICES } from "@/constants";
+import { NAV_CONTENT, NAV_LINKS, SERVICES } from "@/constants";
 import { cn } from "@/utils/cn";
 import { Button } from "../ui/button";
 
@@ -98,13 +98,28 @@ function AnimatedNavLink({
   );
 }
 
-export function Navbar() {
+type NavLink = (typeof NAV_LINKS)[0];
+type ServiceLink = (typeof SERVICES)[0];
+
+export function Navbar({
+  content = NAV_CONTENT,
+  navLinks = NAV_LINKS,
+  services = SERVICES,
+}: {
+  content?: typeof NAV_CONTENT;
+  navLinks?: NavLink[];
+  services?: ServiceLink[];
+}) {
   const [isScrolled, setIsScrolled] = React.useState(false);
   const [hidden, setHidden] = React.useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [isServicesOpen, setIsServicesOpen] = React.useState(false);
   const pathname = usePathname();
   const { scrollY } = useScroll();
+  const servicePaths = React.useMemo(
+    () => new Set(services.map((service) => service.href)),
+    [services],
+  );
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() ?? 0;
@@ -156,14 +171,15 @@ export function Navbar() {
               isTextDark ? "text-primary-950" : "text-white",
             )}
           >
-            EVP<span className="text-secondary-500">.</span>
+            {content.brandMark}
+            <span className="text-secondary-500">.</span>
           </span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-10">
-          {NAV_LINKS.map((link) => {
+          {navLinks.map((link) => {
             const isServicesRoute =
-              pathname === "/services" || pathname.startsWith("/services/");
+              pathname === "/services" || servicePaths.has(pathname);
             const isParentActive =
               link.label === "Services"
                 ? isServicesRoute
@@ -227,7 +243,7 @@ export function Navbar() {
                         <div className="bg-white rounded-2xl shadow-2xl shadow-primary-900/10 border border-primary-50 p-2 grid grid-cols-2 gap-1 w-3xl relative overflow-hidden">
                           <div className="absolute top-0 left-0 w-full h-1.5 bg-linear-to-r from-secondary-400 to-primary-500 opacity-80" />
 
-                          {SERVICES.map((service) => {
+                          {services.map((service) => {
                             const Icon = (iconMap[service.icon] || Feather) as any;
                             const isActive = pathname === service.href;
                             return (
@@ -312,7 +328,7 @@ export function Navbar() {
         </nav>
 
         <div className="hidden md:block">
-          <Button href="/contact">Get Started</Button>
+          <Button href={content.ctaHref}>{content.ctaLabel}</Button>
         </div>
 
         <button
@@ -340,7 +356,7 @@ export function Navbar() {
             className="fixed inset-0 -z-10 bg-primary-950/98 backdrop-blur-3xl md:hidden pt-32 px-8 flex flex-col h-dvh"
           >
             <div className="flex flex-col gap-8 w-full max-w-sm mx-auto">
-              {NAV_LINKS.map((link, i) => (
+              {navLinks.map((link, i) => (
                 <motion.div
                   key={link.label}
                   initial={{ opacity: 0, x: -20 }}
@@ -364,15 +380,15 @@ export function Navbar() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: NAV_LINKS.length * 0.05, duration: 0.5 }}
+                transition={{ delay: navLinks.length * 0.05, duration: 0.5 }}
                 className="mt-8 pt-8 border-t border-white/10"
               >
                 <Link
-                  href="/contact"
+                  href={content.ctaHref}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="w-full flex justify-center py-4 rounded-full bg-secondary-500 text-white font-heading font-bold text-xl hover:bg-secondary-400 transition-colors shadow-lg shadow-secondary-500/20"
                 >
-                  Get Started
+                  {content.ctaLabel}
                 </Link>
               </motion.div>
             </div>

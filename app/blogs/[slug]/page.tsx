@@ -1,12 +1,22 @@
-import { client } from "@/sanity/lib/client";
-import { groq } from "next-sanity";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Metadata } from "next";
-import { BlogDetailHero } from "@/components/blog/blog-detail-hero";
+
 import { BlogArticleSection } from "@/components/blog/blog-article-section";
+import { BlogDetailHero } from "@/components/blog/blog-detail-hero";
 import { DUMMY_POSTS } from "@/constants/blogs";
+import {
+  getBlogIndexPage,
+  getBlogPost,
+  getBlogSlugs,
+} from "@/sanity/lib/content";
+import { metadataFromSeo } from "@/sanity/lib/metadata";
 
 export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const slugs = await getBlogSlugs();
+  return slugs.map((slug) => ({ slug }));
+}
 
 export async function generateMetadata({
   params,
@@ -14,23 +24,17 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  const post = await getBlogPost(slug);
 
-  const post = await client.fetch(
-    groq`*[_type == "post" && slug.current == $slug][0] {
-      title,
-      "description": pt::text(body),
-    }`,
-    { slug }
-  );
+  if (!post) return { title: "Not Found" };
 
-  const fallback = DUMMY_POSTS.find((p) => p.slug === slug);
-  const title = fallback?.metaTitle || post?.title || fallback?.title || "Blog Post";
-  const description = fallback?.metaDesc || post?.description || "Read our latest publishing insights and editorial advice.";
-
-  return {
-    title,
-    description,
-  };
+  return metadataFromSeo(post.seo, {
+    metaTitle: post.metaTitle || post.title,
+    metaDescription:
+      post.metaDesc ||
+      post.excerpt ||
+      "Read our latest publishing insights and editorial advice.",
+  });
 }
 
 export default async function BlogPostPage({
@@ -39,35 +43,20 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const [data, page] = await Promise.all([
+    getBlogPost(slug),
+    getBlogIndexPage(),
+  ]);
 
-  const post = await client.fetch(
-    groq`*[_type == "post" && slug.current == $slug][0] {
-      _id,
-      title,
-      "slug": slug.current,
-      mainImage {
-        asset->{
-          _id,
-          url
-        }
-      },
-      publishedAt,
-      "author": author->{name, "imageUrl": image.asset->url},
-      "categories": categories[]->title,
-      body
-    }`,
-    { slug }
-  );
-
-  const dummyPost = DUMMY_POSTS.find((p) => p.slug === slug);
-
-  if (!post && !dummyPost) {
+  if (!data) {
     notFound();
   }
 
-  const data = post || dummyPost!;
-  const issueNumber =
-    DUMMY_POSTS.findIndex((p) => p.slug === slug) + 1 || 1;
+  const fallbackPost = DUMMY_POSTS.find((post) => post.slug === slug);
+  const issueNumber = Math.max(
+    1,
+    DUMMY_POSTS.findIndex((post) => post.slug === slug) + 1,
+  );
 
   return (
     <main>
@@ -77,22 +66,17 @@ export default async function BlogPostPage({
         categories={data.categories}
         author={data.author}
         mainImage={data.mainImage}
-        readTime={dummyPost?.readTime}
+        readTime={data.readTime || fallbackPost?.readTime}
         issueNumber={issueNumber}
+        content={page.detail}
       />
       <BlogArticleSection
         title={data.title}
         author={data.author}
-        readTime={dummyPost?.readTime}
-        content={dummyPost?.content}
-        fallback={
-          !dummyPost ? (
-            <p className="text-primary-700/55 italic">
-              PortableText rendering required for live Sanity content. Please
-              install <code>@portabletext/react</code>.
-            </p>
-          ) : undefined
-        }
+        readTime={data.readTime || fallbackPost?.readTime}
+        content={fallbackPost?.content}
+        portableContent={data.body}
+        labels={page.detail}
       />
     </main>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { Container } from "@/components/ui/container";
+import { BLOG_ARCHIVE_CONTENT } from "@/constants/blogs";
 import { cn } from "@/utils/cn";
 import { useReducedMotion } from "@/utils/use-reduced-motion";
 import {
@@ -32,6 +33,8 @@ interface Post {
     imageUrl?: string;
   };
 }
+
+type BlogArchiveContent = typeof BLOG_ARCHIVE_CONTENT;
 
 const MONTHS = [
   "Jan",
@@ -67,20 +70,25 @@ function pad(n: number) {
 type Layout = "spread" | "cover" | "broadside";
 const LAYOUT_CYCLE: Layout[] = ["spread", "cover", "broadside"];
 
-export function BlogList({ posts }: { posts: Post[] }) {
+export function BlogList({
+  posts,
+  content = BLOG_ARCHIVE_CONTENT,
+}: {
+  posts: Post[];
+  content?: BlogArchiveContent;
+}) {
   if (!posts || posts.length === 0) {
     return (
       <section className="relative bg-[#FBFAF6] py-32 min-h-[60vh] flex items-center justify-center">
         <Container className="text-center max-w-xl">
           <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-secondary-600 mb-5 block">
-            ◆ The Archive
+            {content.emptyLabel}
           </span>
           <h3 className="text-3xl md:text-4xl font-heading font-medium text-primary-950 leading-tight">
-            The shelf is being curated.
+            {content.emptyHeading}
           </h3>
           <p className="mt-4 text-primary-700/70 leading-relaxed">
-            New articles from our editorial desk are on the way — please check
-            back soon.
+            {content.emptyDescription}
           </p>
         </Container>
       </section>
@@ -108,10 +116,14 @@ export function BlogList({ posts }: { posts: Post[] }) {
       />
 
       <Container className="relative">
-        <ArchiveHeader total={posts.length} latestDate={featured.publishedAt} />
-        <FeaturedSpread post={featured} />
-        {rest.length > 0 && <IndexGrid posts={rest} />}
-        <ArchiveFooter />
+        <ArchiveHeader
+          total={posts.length}
+          latestDate={featured.publishedAt}
+          content={content}
+        />
+        <FeaturedSpread post={featured} content={content} />
+        {rest.length > 0 && <IndexGrid posts={rest} content={content} />}
+        <ArchiveFooter content={content} />
       </Container>
     </section>
   );
@@ -120,9 +132,11 @@ export function BlogList({ posts }: { posts: Post[] }) {
 function ArchiveHeader({
   total,
   latestDate,
+  content,
 }: {
   total: number;
   latestDate: string;
+  content: BlogArchiveContent;
 }) {
   const shouldReduceMotion = useReducedMotion();
   const ref = React.useRef<HTMLDivElement>(null);
@@ -140,13 +154,13 @@ function ArchiveHeader({
         <div>
           <span className="inline-flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em] text-secondary-600 mb-5 font-body">
             <span className="h-px w-8 bg-secondary-400/60" />
-            The Archive
+            {content.eyebrow}
           </span>
           <h2 className="font-heading font-medium text-3xl md:text-4xl lg:text-5xl tracking-tight text-primary-950 leading-[1.05]">
-            Stories from the{" "}
+            {content.headingPrefix}{" "}
             <span className="relative inline-block">
               <span className="relative z-10 italic font-light text-primary-600">
-                press room
+                {content.headingEmphasis}
               </span>
               <span className="absolute bottom-1 left-0 right-0 h-2 bg-secondary-200/60 z-0" />
             </span>
@@ -157,7 +171,7 @@ function ArchiveHeader({
         <div className="flex items-center gap-5 md:gap-6 shrink-0">
           <div className="flex flex-col">
             <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-primary-700/50">
-              Total Issues
+              {content.totalLabel}
             </span>
             <span className="font-heading font-black text-3xl md:text-4xl text-primary-950 tabular-nums leading-none mt-1">
               {pad(total)}
@@ -166,7 +180,7 @@ function ArchiveHeader({
           <div className="w-px h-12 bg-primary-950/15" />
           <div className="flex flex-col">
             <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-primary-700/50">
-              Latest Edition
+              {content.latestLabel}
             </span>
             <span className="text-sm md:text-base font-medium text-primary-950 mt-1">
               {formatDate(latestDate)}
@@ -341,7 +355,13 @@ function HoverHeadline({
   );
 }
 
-function FeaturedSpread({ post }: { post: Post }) {
+function FeaturedSpread({
+  post,
+  content,
+}: {
+  post: Post;
+  content: BlogArchiveContent;
+}) {
   const shouldReduceMotion = useReducedMotion();
   const ref = React.useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.15 });
@@ -362,7 +382,7 @@ function FeaturedSpread({ post }: { post: Post }) {
       <div className="absolute -top-5 left-0 hidden md:flex items-center gap-3 z-20">
         <span className="w-2 h-2 rounded-full bg-secondary-500 shadow-[0_0_0_4px_rgba(44,199,228,0.18)]" />
         <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary-950">
-          Spotlight · Vol. 01
+          {content.spotlightLabel} · Vol. 01
         </span>
       </div>
 
@@ -389,14 +409,14 @@ function FeaturedSpread({ post }: { post: Post }) {
                 <span className="relative inline-flex rounded-full w-1.5 h-1.5 bg-secondary-500" />
               </span>
               <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary-950">
-                Latest Edition
+                {content.latestBadge}
               </span>
             </div>
 
             <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-4 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/image:-translate-y-0.5">
               <div className="px-3 py-1.5 rounded-md bg-white/15 backdrop-blur-md border border-white/25">
                 <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-white">
-                  {post.categories?.[0] || "Editorial"}
+                  {post.categories?.[0] || content.fallbackCategory}
                 </span>
               </div>
               <div className="flex items-center gap-1.5 text-white/90">
@@ -425,7 +445,7 @@ function FeaturedSpread({ post }: { post: Post }) {
               className="flex items-center gap-3 mb-6"
             >
               <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-secondary-600">
-                Issue No. 01
+                {content.issueLabel} No. 01
               </span>
               <span className="w-8 h-px bg-primary-950/20" />
               <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary-700/70">
@@ -453,9 +473,7 @@ function FeaturedSpread({ post }: { post: Post }) {
               transition={{ duration: 0.7, delay: 0.35, ease: EASE }}
               className="text-primary-700/75 leading-relaxed text-base md:text-lg max-w-md mb-10 font-light"
             >
-              An editorial deep-dive from our publishing desk — read the full
-              story, plus the pull-quotes, sources, and asides we couldn&apos;t
-              fit into a tweet.
+              {content.featuredDescription}
             </motion.p>
 
             <motion.div
@@ -481,10 +499,10 @@ function FeaturedSpread({ post }: { post: Post }) {
                 )}
                 <div className="flex flex-col">
                   <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-primary-700/55">
-                    Authored by
+                    {content.authoredByLabel}
                   </span>
                   <span className="text-sm font-medium text-primary-950">
-                    {post.author?.name || "Editorial Team"}
+                    {post.author?.name || content.fallbackAuthor}
                   </span>
                 </div>
               </div>
@@ -495,7 +513,7 @@ function FeaturedSpread({ post }: { post: Post }) {
                 className="group/cta inline-flex items-center gap-3 focus-visible:outline-none rounded-full"
               >
                 <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary-950 hidden sm:inline relative">
-                  Read
+                  {content.readLabel}
                   <span className="absolute -bottom-0.5 left-0 right-0 h-px bg-primary-950 origin-left scale-x-0 group-hover/cta:scale-x-100 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]" />
                 </span>
                 <MagneticCTA strength={0.4}>
@@ -512,7 +530,13 @@ function FeaturedSpread({ post }: { post: Post }) {
   );
 }
 
-function IndexGrid({ posts }: { posts: Post[] }) {
+function IndexGrid({
+  posts,
+  content,
+}: {
+  posts: Post[];
+  content: BlogArchiveContent;
+}) {
   const shouldReduceMotion = useReducedMotion();
   const headerRef = React.useRef<HTMLDivElement>(null);
   const isInView = useInView(headerRef, { once: true, amount: 0.5 });
@@ -527,11 +551,12 @@ function IndexGrid({ posts }: { posts: Post[] }) {
         className="flex items-center gap-4 mb-10 md:mb-14"
       >
         <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary-700/65">
-          ✦ The Reading List
+          {content.readingListLabel}
         </span>
         <span className="flex-1 h-px bg-primary-950/10" />
         <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary-700/65 tabular-nums">
-          {pad(posts.length)} {posts.length === 1 ? "Story" : "Stories"}
+          {pad(posts.length)}{" "}
+          {posts.length === 1 ? content.storySingular : content.storyPlural}
         </span>
       </motion.div>
 
@@ -544,6 +569,7 @@ function IndexGrid({ posts }: { posts: Post[] }) {
               post={post}
               index={i + 2}
               layout={layout}
+              content={content}
             />
           );
         })}
@@ -556,10 +582,12 @@ function IndexCard({
   post,
   index,
   layout,
+  content,
 }: {
   post: Post;
   index: number;
   layout: Layout;
+  content: BlogArchiveContent;
 }) {
   const shouldReduceMotion = useReducedMotion();
   const ref = React.useRef<HTMLElement>(null);
@@ -585,13 +613,28 @@ function IndexCard({
       className={colSpan}
     >
       {layout === "spread" && (
-        <SpreadCard post={post} index={index} isInView={isInView} />
+        <SpreadCard
+          post={post}
+          index={index}
+          isInView={isInView}
+          content={content}
+        />
       )}
       {layout === "cover" && (
-        <CoverCard post={post} index={index} isInView={isInView} />
+        <CoverCard
+          post={post}
+          index={index}
+          isInView={isInView}
+          content={content}
+        />
       )}
       {layout === "broadside" && (
-        <BroadsideCard post={post} index={index} isInView={isInView} />
+        <BroadsideCard
+          post={post}
+          index={index}
+          isInView={isInView}
+          content={content}
+        />
       )}
     </motion.article>
   );
@@ -656,10 +699,12 @@ function SpreadCard({
   post,
   index,
   isInView,
+  content,
 }: {
   post: Post;
   index: number;
   isInView: boolean;
+  content: BlogArchiveContent;
 }) {
   return (
     <CardShell
@@ -697,11 +742,11 @@ function SpreadCard({
             <StaggerChildren isInView={isInView}>
               <div className="flex items-center gap-2.5 mb-5">
                 <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-secondary-600">
-                  Issue {pad(index)}
+                  {content.issueLabel} {pad(index)}
                 </span>
                 <span className="w-1 h-1 rounded-full bg-primary-950/25" />
                 <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-primary-700/65">
-                  {post.categories?.[0] || "Editorial"}
+                  {post.categories?.[0] || content.fallbackCategory}
                 </span>
               </div>
 
@@ -719,7 +764,7 @@ function SpreadCard({
             </span>
             <span className="group/cta inline-flex items-center gap-2">
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary-950 opacity-0 -translate-x-1 group-hover/cta:opacity-100 group-hover/cta:translate-x-0 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]">
-                Read
+                {content.readLabel}
               </span>
               <MagneticCTA>
                 <span className="w-9 h-9 rounded-full border border-primary-950/15 flex items-center justify-center text-primary-950 transition-[background-color,color,border-color,box-shadow,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/cta:bg-primary-950 group-hover/cta:text-white group-hover/cta:border-primary-950 group-hover/cta:shadow-[0_12px_30px_-10px_rgba(6,48,75,0.45)]">
@@ -740,10 +785,12 @@ function CoverCard({
   post,
   index,
   isInView,
+  content,
 }: {
   post: Post;
   index: number;
   isInView: boolean;
+  content: BlogArchiveContent;
 }) {
   return (
     <CardShell
@@ -768,7 +815,7 @@ function CoverCard({
             </div>
             <div className="px-2.5 py-1 rounded-full bg-primary-950/85 backdrop-blur-sm">
               <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-white">
-                {post.categories?.[0] || "Editorial"}
+                {post.categories?.[0] || content.fallbackCategory}
               </span>
             </div>
           </div>
@@ -798,11 +845,11 @@ function CoverCard({
 
         <div className="flex items-center justify-between border-t border-primary-950/8 pt-4">
           <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary-700/55">
-            Issue {pad(index)}
+            {content.issueLabel} {pad(index)}
           </span>
           <span className="group/cta inline-flex items-center gap-2">
             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary-950 opacity-0 -translate-x-1 group-hover/cta:opacity-100 group-hover/cta:translate-x-0 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]">
-              Read
+              {content.readLabel}
             </span>
             <MagneticCTA>
               <span className="w-9 h-9 rounded-full border border-primary-950/15 flex items-center justify-center text-primary-950 transition-[background-color,color,border-color,box-shadow,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/cta:bg-primary-950 group-hover/cta:text-white group-hover/cta:border-primary-950 group-hover/cta:shadow-[0_12px_30px_-10px_rgba(6,48,75,0.45)]">
@@ -822,10 +869,12 @@ function BroadsideCard({
   post,
   index,
   isInView,
+  content,
 }: {
   post: Post;
   index: number;
   isInView: boolean;
+  content: BlogArchiveContent;
 }) {
   return (
     <CardShell
@@ -854,7 +903,7 @@ function BroadsideCard({
                 </span>
                 <span className="w-10 h-px bg-white/20" />
                 <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/70">
-                  Featured Broadside
+                  {content.featuredBroadsideLabel}
                 </span>
               </div>
               <div className="hidden sm:flex items-center gap-1.5 text-white/60">
@@ -869,7 +918,7 @@ function BroadsideCard({
               <div className="flex items-center gap-2.5 mb-5">
                 <span className="px-2.5 py-1 rounded-full bg-white/10 border border-white/15 backdrop-blur-sm">
                   <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-secondary-300">
-                    {post.categories?.[0] || "Editorial"}
+                    {post.categories?.[0] || content.fallbackCategory}
                   </span>
                 </span>
                 <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/50">
@@ -901,13 +950,13 @@ function BroadsideCard({
                   </div>
                 )}
                 <span className="text-sm font-medium text-white/80">
-                  {post.author?.name || "Editorial Team"}
+                  {post.author?.name || content.fallbackAuthor}
                 </span>
               </div>
 
               <span className="group/cta inline-flex items-center gap-3 text-white">
                 <span className="text-xs font-bold uppercase tracking-[0.25em] hidden sm:inline relative">
-                  Read Article
+                  {content.readArticleLabel}
                   <span className="absolute -bottom-0.5 left-0 right-0 h-px bg-secondary-300 origin-left scale-x-0 group-hover/cta:scale-x-100 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]" />
                 </span>
                 <MagneticCTA strength={0.4}>
@@ -938,7 +987,7 @@ function BroadsideCard({
   );
 }
 
-function ArchiveFooter() {
+function ArchiveFooter({ content }: { content: BlogArchiveContent }) {
   const shouldReduceMotion = useReducedMotion();
   const ref = React.useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.4 });
@@ -955,7 +1004,7 @@ function ArchiveFooter() {
       )}
     >
       <span className="h-px w-16 bg-primary-950/10" />
-      <span>End of Current Edition</span>
+      <span>{content.footerLabel}</span>
       <span className="h-px w-16 bg-primary-950/10" />
     </motion.div>
   );

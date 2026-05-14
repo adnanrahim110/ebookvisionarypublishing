@@ -1,6 +1,12 @@
 "use client";
 import { motion, useInView } from "framer-motion";
-import { Award, BookOpen, DollarSign, Users } from "lucide-react";
+import {
+  Award,
+  BookOpen,
+  DollarSign,
+  type LucideIcon,
+  Users,
+} from "lucide-react";
 import * as React from "react";
 
 import { Container } from "@/components/ui/container";
@@ -8,46 +14,27 @@ import { Heading } from "@/components/ui/heading";
 import { Section } from "@/components/ui/section";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Text } from "@/components/ui/text";
+import { ABOUT_PAGE } from "@/constants";
 import { useReducedMotion } from "@/utils/use-reduced-motion";
 
-const strengths = [
-  {
-    icon: Award,
-    title: "Best Seller Ghostwriters",
-    description:
-      "Our top-notch ghostwriters work tirelessly to deliver a best-selling novel, crafting narratives that captivate readers from the first page to the last.",
-  },
-  {
-    icon: Users,
-    title: "Experienced Professionals",
-    description:
-      "With experienced professionals and over a decade of expertise in digital publishing, we bring unmatched skill to every project we undertake.",
-  },
-  {
-    icon: BookOpen,
-    title: "1200+ Books Published",
-    description:
-      "We have successfully released more than 1,200 books on renowned platforms including Amazon, Barnes & Noble, and Apple Books worldwide.",
-  },
-  {
-    icon: DollarSign,
-    title: "Affordability Is Our Strength",
-    description:
-      "We offer different affordable packages with absolutely no compromise on quality, making premium publishing services accessible to every author.",
-  },
-];
+const iconMap: Record<string, LucideIcon> = {
+  award: Award,
+  users: Users,
+  "book-open": BookOpen,
+  "dollar-sign": DollarSign,
+};
 
 function StrengthCard({
   item,
   index,
 }: {
-  item: (typeof strengths)[0];
+  item: (typeof ABOUT_PAGE.strengths.items)[0];
   index: number;
 }) {
   const shouldReduceMotion = useReducedMotion();
   const ref = React.useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
-  const Icon = item.icon;
+  const Icon = iconMap[item.icon] || Award;
 
   return (
     <motion.div
@@ -88,28 +75,31 @@ function StrengthCard({
   );
 }
 
-export function StrengthsSection() {
+export function StrengthsSection({
+  content = ABOUT_PAGE.strengths,
+}: {
+  content?: typeof ABOUT_PAGE.strengths;
+}) {
   return (
     <Section spacing="lg" className="bg-white">
       <Container>
         <div className="flex flex-col md:flex-row justify-between items-start mb-20 gap-8">
           <div className="max-w-2xl">
-            <SectionLabel className="mb-5">Why Choose Us</SectionLabel>
+            <SectionLabel className="mb-5">{content.label}</SectionLabel>
             <Heading as="h2" size="h2">
-              What Sets Us Apart.
+              {content.heading}
             </Heading>
           </div>
           <Text
             size="lg"
             className="max-w-sm text-primary-700/80 leading-relaxed md:pt-10"
           >
-            We combine creative excellence with affordable pricing to deliver
-            publishing solutions that truly make a difference.
+            {content.description}
           </Text>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-10">
-          {strengths.map((item, i) => (
+          {content.items.map((item, i) => (
             <StrengthCard key={item.title} item={item} index={i} />
           ))}
         </div>

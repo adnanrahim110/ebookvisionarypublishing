@@ -4,6 +4,11 @@ import { globalSettings } from './globalSettings'
 import { post } from './post'
 import { author } from './author'
 import { category } from './category'
+import { service } from './service'
+import { testimonial } from './testimonial'
+import { portfolioBook } from './portfolioBook'
+import { legalPage } from './legalPage'
+import { pageContent } from './pageContent'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -12,5 +17,10 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     post,
     author,
     category,
+    service,
+    testimonial,
+    portfolioBook,
+    legalPage,
+    pageContent,
   ],
 }

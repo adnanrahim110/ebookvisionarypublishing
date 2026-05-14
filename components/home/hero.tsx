@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
+import { HOME_HERO } from "@/constants";
 import { useReducedMotion } from "@/utils/use-reduced-motion";
 
 const Hero3D = dynamic(() => import("./hero-3d").then((mod) => mod.Hero3D), {
@@ -19,7 +20,7 @@ const fadeUp = (delay: number) => ({
   transition: { duration: 0.9, delay, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
 });
 
-export function Hero() {
+export function Hero({ content = HOME_HERO }: { content?: typeof HOME_HERO }) {
   const shouldReduceMotion = useReducedMotion();
 
   return (
@@ -95,9 +96,9 @@ export function Hero() {
               {...(shouldReduceMotion ? {} : fadeUp(0.1))}
               className="inline-flex items-center gap-2.5 px-4 py-2 rounded-sm bg-white/4 border border-white/8 backdrop-blur-sm mb-8"
             >
-              <Sparkles className="w-3.5 h-3.5 text-secondary-400" />
-              <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-primary-200/80">
-                Premium Publishing Studio
+                <Sparkles className="w-3.5 h-3.5 text-secondary-400" />
+                <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-primary-200/80">
+                {content.label}
               </span>
             </motion.div>
 
@@ -107,7 +108,7 @@ export function Hero() {
               animated
               className="mb-8 max-w-2xl text-white! leading-[1.1]!"
             >
-              Give Your Story The Voice It Deserves.
+              {content.title}
             </Heading>
 
             <motion.div {...(shouldReduceMotion ? {} : fadeUp(0.8))}>
@@ -115,20 +116,11 @@ export function Hero() {
                 size="xl"
                 className="max-w-3xl mb-10 leading-relaxed text-primary-200/80! font-light"
               >
-                Thoughtfully crafted, beautifully produced, and ready for the
-                world. We bring your story to life with{" "}
-                <span className="text-white font-medium">
-                  premium publishing support
-                </span>{" "}
-                from start to finish.
+                {content.description}
               </Text>
 
               <div className="flex items-center gap-8 mb-10">
-                {[
-                  { value: "500+", label: "Books Published" },
-                  { value: "98%", label: "Client Satisfaction" },
-                  { value: "15+", label: "Years Experience" },
-                ].map((stat) => (
+                {content.stats.map((stat) => (
                   <div key={stat.label}>
                     <div className="text-xl font-bold text-white">
                       {stat.value}
@@ -141,12 +133,12 @@ export function Hero() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" href="/contact">
-                  Start Publishing
+                <Button size="lg" href={content.primaryCta.href}>
+                  {content.primaryCta.label}
                   <ArrowRight size={18} />
                 </Button>
-                <Button size="lg" variant="outline-white" href="/portfolio">
-                  View Our Portfolio
+                <Button size="lg" variant="outline-white" href={content.secondaryCta.href}>
+                  {content.secondaryCta.label}
                 </Button>
               </div>
             </motion.div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Container } from "@/components/ui/container";
+import { BLOG_DETAIL_CONTENT } from "@/constants/blogs";
 import { useReducedMotion } from "@/utils/use-reduced-motion";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowLeft, Clock3 } from "lucide-react";
@@ -53,6 +54,7 @@ interface BlogDetailHeroProps {
   };
   readTime?: number;
   issueNumber?: number;
+  content?: typeof BLOG_DETAIL_CONTENT;
 }
 
 export function BlogDetailHero({
@@ -63,6 +65,7 @@ export function BlogDetailHero({
   mainImage,
   readTime,
   issueNumber = 1,
+  content = BLOG_DETAIL_CONTENT,
 }: BlogDetailHeroProps) {
   const shouldReduceMotion = useReducedMotion();
   const ref = React.useRef<HTMLDivElement>(null);
@@ -148,7 +151,7 @@ export function BlogDetailHero({
                 <span className="absolute inset-0 rounded-full bg-secondary-400/15 scale-0 group-hover/back:scale-100 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] -z-10" />
               </span>
               <span className="relative">
-                Back to Archive
+                {content.backToArchiveLabel}
                 <span className="absolute -bottom-1 left-0 right-0 h-px bg-secondary-300 origin-left scale-x-0 group-hover/back:scale-x-100 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]" />
               </span>
             </Link>
@@ -166,12 +169,12 @@ export function BlogDetailHero({
                 <span className="relative inline-flex rounded-full w-1.5 h-1.5 bg-secondary-400" />
               </span>
               <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-secondary-300">
-                {categories?.[0] || "Editorial"}
+                {categories?.[0] || content.fallbackCategory}
               </span>
             </span>
 
             <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/50">
-              Issue No. {issuePad}
+              {content.issueLabel} No. {issuePad}
             </span>
 
             <span className="w-px h-4 bg-white/15" />
@@ -184,7 +187,7 @@ export function BlogDetailHero({
 
             <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.25em] text-white/50">
               <Clock3 className="w-3 h-3" />
-              {minutes} Min Read
+              {minutes} {content.readTimeSuffix}
             </span>
           </motion.div>
 
@@ -227,17 +230,17 @@ export function BlogDetailHero({
               )}
               <div className="flex flex-col">
                 <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-white/45">
-                  Authored by
+                  {content.authoredByLabel}
                 </span>
                 <span className="text-base font-medium text-white mt-1">
-                  {author?.name || "Editorial Team"}
+                  {author?.name || content.fallbackAuthor}
                 </span>
               </div>
             </div>
 
             <div className="hidden sm:flex items-center gap-3 text-white/40">
               <span className="text-[10px] font-bold uppercase tracking-[0.3em]">
-                Scroll to read
+                {content.scrollLabel}
               </span>
               <ScrollIndicator />
             </div>

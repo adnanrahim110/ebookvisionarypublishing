@@ -8,6 +8,7 @@ import { Heading } from "@/components/ui/heading";
 import { Section } from "@/components/ui/section";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Text } from "@/components/ui/text";
+import { ABOUT_PAGE } from "@/constants";
 import { cn } from "@/utils/cn";
 import { useReducedMotion } from "@/utils/use-reduced-motion";
 
@@ -37,20 +38,18 @@ function BentoCard({
   );
 }
 
-export function StorySection() {
-  const stats = [
-    { value: "1,200+", label: "Books Published" },
-    { value: "98%", label: "Client Satisfaction" },
-    { value: "10+", label: "Years of Excellence" },
-  ];
-
+export function StorySection({
+  content = ABOUT_PAGE.story,
+}: {
+  content?: typeof ABOUT_PAGE.story;
+}) {
   return (
     <Section spacing="lg" className="bg-primary-50/50 overflow-hidden">
       <Container>
         <div className="max-w-2xl mb-16">
-          <SectionLabel className="mb-5">Our Story</SectionLabel>
+          <SectionLabel className="mb-5">{content.label}</SectionLabel>
           <Heading as="h2" size="h2">
-            Where Great Books Begin.
+            {content.heading}
           </Heading>
         </div>
 
@@ -69,30 +68,21 @@ export function StorySection() {
                   <span className="float-left font-heading font-bold text-6xl leading-[0.8] mr-3 mt-1 text-primary-500">
                     E
                   </span>
-                  book Visionary is where great books begin and successful
-                  authors are made. We deliver everything you need to publish
-                  with confidence. Your book deserves to look as good as it
-                  reads — and we make sure it does, every single time.
+                  {content.paragraphs[0].slice(1)}
                 </Text>
 
                 <Text
                   size="lg"
                   className="text-primary-700/80 leading-loose font-light mb-8"
                 >
-                  That&apos;s why we specialize in ghostwriting, book editing,
-                  professional proofreading, custom book cover design, detailed
-                  book illustration, and building author websites that enhance
-                  your brand and grow your audience.
+                  {content.paragraphs[1]}
                 </Text>
 
                 <Text
                   size="lg"
                   className="text-primary-700/80 leading-loose font-light"
                 >
-                  We strive to build lasting partnerships with our authors,
-                  helping them achieve their dreams and reach readers worldwide.
-                  From the first draft to the bestseller list, we are with you
-                  every step of the way.
+                  {content.paragraphs[2]}
                 </Text>
               </div>
 
@@ -115,16 +105,15 @@ export function StorySection() {
                       size="xl"
                       className="text-white/90! font-heading font-medium leading-[1.6] italic"
                     >
-                      Every author deserves a publishing partner who treats
-                      their story with the same passion they wrote it with.
+                      {content.quote}
                     </Text>
                   </div>
                   <div className="mt-8 pt-6 border-t border-white/10">
                     <span className="text-secondary-400 text-sm font-semibold font-heading tracking-wide">
-                      Ebook Visionary Publishing
+                      {content.quoteAuthor}
                     </span>
                     <span className="block text-white/40 text-xs font-body mt-1">
-                      Our founding philosophy
+                      {content.quoteRole}
                     </span>
                   </div>
                 </div>
@@ -134,7 +123,7 @@ export function StorySection() {
             <BentoCard delay={0.2} className="group">
               <div className="relative rounded-2xl bg-white border border-primary-100/80 p-8 overflow-hidden transition-shadow duration-700 hover:shadow-xl hover:shadow-primary-900/4">
                 <div className="grid grid-cols-3 divide-x divide-primary-100">
-                  {stats.map((stat) => (
+                  {content.stats.map((stat) => (
                     <div
                       key={stat.label}
                       className="flex flex-col items-center text-center px-3"
@@ -163,7 +152,7 @@ export function StorySection() {
 
               <div className="relative z-10">
                 <span className="text-xs font-semibold uppercase tracking-[0.25em] text-secondary-500 font-body mb-4 block">
-                  What We Believe
+                  {content.beliefLabel}
                 </span>
                 <Heading
                   as="h3"
@@ -171,12 +160,10 @@ export function StorySection() {
                   animated={false}
                   className="mb-4 leading-snug!"
                 >
-                  Publishing isn&apos;t just our business — it&apos;s our craft.
+                  {content.beliefHeading}
                 </Heading>
                 <Text className="text-primary-700/70 leading-relaxed">
-                  We approach every project as a partnership, not a transaction.
-                  Your story, your voice, your legacy — polished and published
-                  with meticulous care.
+                  {content.beliefDescription}
                 </Text>
               </div>
             </div>
@@ -194,18 +181,17 @@ export function StorySection() {
                   animated={false}
                   className="text-white leading-snug!"
                 >
-                  Ready to begin your publishing journey?
+                  {content.ctaHeading}
                 </Heading>
                 <Text className="text-primary-200/60 leading-relaxed">
-                  Let us help you transform your manuscript into a beautifully
-                  published book the world will love.
+                  {content.ctaDescription}
                 </Text>
                 <div className="flex flex-col sm:flex-row gap-3 shrink-0">
-                  <Button size="lg" href="/services">
-                    Our Services
+                  <Button size="lg" href={content.primaryCta.href}>
+                    {content.primaryCta.label}
                   </Button>
-                  <Button size="lg" variant="outline-white" href="/contact">
-                    Get In Touch
+                  <Button size="lg" variant="outline-white" href={content.secondaryCta.href}>
+                    {content.secondaryCta.label}
                   </Button>
                 </div>
               </div>

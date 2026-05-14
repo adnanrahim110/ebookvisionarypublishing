@@ -10,26 +10,14 @@ import { Heading } from "@/components/ui/heading";
 import { Section } from "@/components/ui/section";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Text } from "@/components/ui/text";
+import { PRICING_SECTION } from "@/constants";
 import { useReducedMotion } from "@/utils/use-reduced-motion";
 
-const OFFERS = [
-  {
-    text: "Step-by-step publishing support",
-    bold: "from manuscript to market",
-  },
-  {
-    text: "Creative freedom",
-    bold: "with professional guidance along the way",
-  },
-  { text: "Affordable editing, formatting,", bold: "and design packages" },
-  {
-    text: "Distribution to major platforms",
-    bold: "like Amazon, Barnes & Noble, and Apple Books",
-  },
-  { text: "Marketing add-ons", bold: "to boost your visibility and reach" },
-];
-
-export function Pricing() {
+export function Pricing({
+  content = PRICING_SECTION,
+}: {
+  content?: typeof PRICING_SECTION;
+}) {
   const ref = React.useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
   const shouldReduceMotion = useReducedMotion();
@@ -49,8 +37,8 @@ export function Pricing() {
           >
             <div className="relative rounded-2xl overflow-hidden aspect-4/5 shadow-2xl">
               <Image
-                src="/images/author-publishing.png"
-                alt="Author holding her published book"
+                src={content.image.src}
+                alt={content.image.alt}
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -61,15 +49,15 @@ export function Pricing() {
             <div className="absolute -bottom-6 -right-4 md:right-6 bg-white rounded-xl shadow-xl border border-primary-100 p-5 flex items-center gap-4 z-10">
               <div className="h-12 w-12 rounded-full bg-primary-50 flex items-center justify-center">
                 <span className="font-heading font-black text-primary-600 text-lg">
-                  100%
+                  {content.badge.value}
                 </span>
               </div>
               <div>
                 <p className="font-heading font-bold text-primary-900 text-sm">
-                  Royalty Ownership
+                  {content.badge.title}
                 </p>
                 <p className="text-primary-400 text-xs">
-                  You keep all your earnings
+                  {content.badge.description}
                 </p>
               </div>
             </div>
@@ -82,33 +70,27 @@ export function Pricing() {
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           >
-            <SectionLabel className="mb-4">Publishing Your Way</SectionLabel>
+            <SectionLabel className="mb-4">{content.label}</SectionLabel>
 
             <Heading as="h2" size="h2" className="mb-6">
-              Every Step of Publishing.
+              {content.heading}
             </Heading>
 
             <Text size="lg" className="text-neutral-700 mb-4 leading-relaxed">
-              Publishing today isn&apos;t what it used to be. While traditional
-              publishing can offer recognition, it often means surrendering
-              creative control to industry gatekeepers. That&apos;s why more
-              authors are choosing self-publishing where the power stays with
-              you.
+              {content.paragraphs[0]}
             </Text>
 
             <Text className="text-neutral-600 mb-10 leading-relaxed">
-              Whether you&apos;re launching the next bestseller or sharing a
-              passion project, our ebook and print publishing services make it
-              easy to publish your book your way.
+              {content.paragraphs[1]}
             </Text>
 
             <div className="mb-10">
               <Heading as="h3" size="h5" animated={false} className="mb-6">
-                What We Offer:
+                {content.offerHeading}
               </Heading>
 
               <ul className="flex flex-col gap-4">
-                {OFFERS.map((item, i) => (
+                {content.offers.map((item, i) => (
                   <motion.li
                     key={i}
                     initial={shouldReduceMotion ? {} : { opacity: 0, x: 20 }}
@@ -126,17 +108,16 @@ export function Pricing() {
                     />
                     <Text size="sm" className="text-primary-700">
                       <strong className="font-semibold text-primary-900">
-                        {item.text}
+                        {item}
                       </strong>{" "}
-                      {item.bold}
                     </Text>
                   </motion.li>
                 ))}
               </ul>
             </div>
 
-            <Button href="/contact" size="lg" className="group">
-              Start Your Journey
+            <Button href={content.cta.href} size="lg" className="group">
+              {content.cta.label}
               <ArrowRight
                 size={16}
                 className="ml-2 transition-transform duration-300 group-hover:translate-x-1"

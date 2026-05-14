@@ -21,18 +21,9 @@ import { Heading } from "@/components/ui/heading";
 import { Section } from "@/components/ui/section";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Text } from "@/components/ui/text";
-import { CONTACT_DETAILS } from "@/constants";
+import { CONTACT_DETAILS, CONTACT_SECTION, SERVICE_OPTIONS } from "@/constants";
 import { cn } from "@/utils/cn";
 import { useReducedMotion } from "@/utils/use-reduced-motion";
-
-const SERVICE_OPTIONS = [
-  { label: "Full Publishing Package", value: "publishing" },
-  { label: "Editing & Proofreading", value: "editing" },
-  { label: "Cover Design & Formatting", value: "design" },
-  { label: "Book Marketing", value: "marketing" },
-  { label: "Ghostwriting", value: "ghostwriting" },
-  { label: "Other / Not Sure", value: "other" },
-];
 
 const ICONS_MAP: Record<string, any> = {
   phone: Phone,
@@ -40,7 +31,13 @@ const ICONS_MAP: Record<string, any> = {
   office: MapPin,
 };
 
-export function ContactSection() {
+export function ContactSection({
+  content = CONTACT_SECTION,
+  contactDetails = CONTACT_DETAILS,
+}: {
+  content?: typeof CONTACT_SECTION;
+  contactDetails?: typeof CONTACT_DETAILS;
+}) {
   const shouldReduceMotion = useReducedMotion();
   const formRef = React.useRef<HTMLDivElement>(null);
   const formInView = useInView(formRef, { once: true, amount: 0.1 });
@@ -50,18 +47,19 @@ export function ContactSection() {
       <Container>
         <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-16">
           <div className="max-w-xl">
-            <SectionLabel className="mb-5">Get In Touch</SectionLabel>
+            <SectionLabel className="mb-5">{content.label}</SectionLabel>
             <Heading as="h2" size="h2">
-              Let&apos;s Discuss Your{" "}
-              <em className="not-italic text-primary-500">Next Chapter.</em>
+              {content.heading}{" "}
+              <em className="not-italic text-primary-500">
+                {content.headingEmphasis}
+              </em>
             </Heading>
           </div>
           <Text
             size="lg"
             className="max-w-md text-primary-700/70 leading-relaxed md:pt-10"
           >
-            Reach out directly or use the inquiry form. Our editorial team is
-            ready to help you bring your vision to life.
+            {content.description}
           </Text>
         </div>
 
@@ -72,11 +70,11 @@ export function ContactSection() {
 
             <div className="relative z-10 flex flex-col gap-8 h-full">
               <Heading as="h3" size="h3" className="text-white">
-                Contact Information
+                {content.infoHeading}
               </Heading>
 
               <div className="flex flex-col gap-4">
-                {CONTACT_DETAILS.map((card, i) => {
+                {contactDetails.map((card, i) => {
                   const Icon = ICONS_MAP[card.id] || Phone;
                   const Wrapper = card.href ? "a" : "div";
                   const wrapperProps = card.href ? { href: card.href } : {};
@@ -125,10 +123,10 @@ export function ContactSection() {
                 </div>
                 <div>
                   <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40 block mb-1">
-                    Operating Hours
+                    {content.hoursLabel}
                   </span>
                   <span className="text-white/80 font-medium text-[15px] block">
-                    Mon – Fri, 9 AM – 6 PM CST
+                    {content.hours}
                   </span>
                 </div>
               </div>
@@ -155,11 +153,10 @@ export function ContactSection() {
                   animated={false}
                   className="mb-4 text-primary-950"
                 >
-                  Send an Inquiry
+                  {content.formHeading}
                 </Heading>
                 <Text className="text-primary-700 max-w-lg mx-auto sm:mx-0 text-sm">
-                  Fill out the fields below and we&apos;ll get back to you
-                  within 24 hours.
+                  {content.formDescription}
                 </Text>
               </div>
 
@@ -168,28 +165,27 @@ export function ContactSection() {
                 onSubmit={(e) => e.preventDefault()}
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormInput icon={User} label="Full Name" type="text" />
-                  <FormInput icon={Mail} label="Email Address" type="email" />
+                  <FormInput icon={User} label={content.fullNameLabel} type="text" />
+                  <FormInput icon={Mail} label={content.emailLabel} type="email" />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormInput icon={Phone} label="Phone Number" type="tel" />
+                  <FormInput icon={Phone} label={content.phoneLabel} type="tel" />
                   <FormSelect
                     icon={LayoutGrid}
-                    label="Service of Interest"
+                    label={content.serviceLabel}
                     options={SERVICE_OPTIONS}
                   />
                 </div>
 
                 <FormTextarea
                   icon={MessageSquare}
-                  label="Tell us about your manuscript or project..."
+                  label={content.messageLabel}
                 />
 
                 <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-6">
                   <Text className="text-primary-500! text-xs! text-center sm:text-left max-w-xs">
-                    By submitting, you agree to our privacy policy. We&apos;ll
-                    never share your information.
+                    {content.privacyText}
                   </Text>
 
                   <button
@@ -198,7 +194,7 @@ export function ContactSection() {
                   >
                     <div className="absolute inset-0 bg-linear-to-r from-primary-600 to-secondary-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <span className="relative z-10 font-heading font-semibold text-white text-[15px] tracking-wide">
-                      Send Message
+                      {content.submitLabel}
                     </span>
                     <div className="relative z-10 overflow-hidden w-5 h-5 flex items-center justify-center">
                       <Send className="w-4.5 h-4.5 text-white absolute group-hover:translate-x-6 group-hover:-translate-y-6 transition-transform duration-500" />

@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import { ContactSection } from "@/components/home/contact-section";
 import { FaqAccordion } from "@/components/home/faq-accordion";
 import { Hero } from "@/components/home/hero";
@@ -8,34 +10,44 @@ import { ServicesOverview } from "@/components/home/services-overview";
 import { TestimonialsSection } from "@/components/home/testimonials-section";
 import { WhyPublish } from "@/components/home/why-publish";
 import { StatsRow } from "@/components/shared/stats-row";
-import { client } from "@/sanity/lib/client";
+import {
+  getHomePage,
+  getPortfolioBooks,
+  getServices,
+  getTestimonials,
+} from "@/sanity/lib/content";
+import { metadataFromSeo } from "@/sanity/lib/metadata";
+
+export const revalidate = 60;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getHomePage();
+  return metadataFromSeo(page.seo);
+}
 
 export default async function Home() {
-  const globalSettings = await client
-    .fetch(`*[_type == "globalSettings"][0]`)
-    .catch(() => null);
-  const services = await client
-    .fetch(`*[_type == "service"] | order(_createdAt asc)`)
-    .catch(() => []);
-  const testimonials = await client
-    .fetch(`*[_type == "testimonial"] | order(_createdAt asc)`)
-    .catch(() => []);
-  const books = await client
-    .fetch(`*[_type == "portfolioBook"] | order(_createdAt desc)`)
-    .catch(() => []);
+  const [page, services, testimonials, books] = await Promise.all([
+    getHomePage(),
+    getServices(),
+    getTestimonials(),
+    getPortfolioBooks(),
+  ]);
 
   return (
     <>
-      <Hero />
-      <StatsRow />
-      <WhyPublish />
-      <ServicesOverview services={services} />
-      <PortfolioGrid books={books} />
-      <HowItWorks />
-      <Pricing />
-      <TestimonialsSection testimonials={testimonials} />
-      <FaqAccordion />
-      <ContactSection />
+      <Hero content={page.hero} />
+      <StatsRow statsData={page.stats} />
+      <WhyPublish content={page.whyPublish} />
+      <ServicesOverview services={services} content={page.servicesOverview} />
+      <PortfolioGrid books={books} content={page.portfolio} />
+      <HowItWorks processSteps={page.process.steps} content={page.process} />
+      <Pricing content={page.pricing} />
+      <TestimonialsSection
+        testimonials={testimonials}
+        content={page.testimonials}
+      />
+      <FaqAccordion faqs={page.faq.items} content={page.faq} />
+      <ContactSection content={page.contact} />
     </>
   );
 }

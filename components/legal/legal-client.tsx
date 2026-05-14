@@ -7,7 +7,7 @@ import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
 import { Section } from "@/components/ui/section";
 import { Text } from "@/components/ui/text";
-import { LegalData } from "@/constants/legal";
+import { LegalData, LEGAL_PAGE_CONTENT } from "@/constants/legal";
 
 export function LegalClient({ data }: { data: LegalData }) {
   const [activeSection, setActiveSection] = React.useState(
@@ -42,13 +42,14 @@ export function LegalClient({ data }: { data: LegalData }) {
         <Container className="relative z-10">
           <div className="max-w-3xl">
             <span className="inline-block py-1 px-3 rounded-full bg-secondary-500/10 text-secondary-400 text-xs font-bold tracking-widest uppercase mb-4 border border-secondary-500/20">
-              Legal Documents
+              {data.pageLabel || LEGAL_PAGE_CONTENT.pageLabel}
             </span>
             <Heading as="h1" size="h1" className="text-white mb-6">
               {data.title}
             </Heading>
             <Text className="text-primary-200/80 text-lg md:text-xl">
-              Last Updated: {data.lastUpdated}
+              {data.lastUpdatedLabel || LEGAL_PAGE_CONTENT.lastUpdatedLabel}:{" "}
+              {data.lastUpdated}
             </Text>
           </div>
         </Container>
@@ -59,7 +60,8 @@ export function LegalClient({ data }: { data: LegalData }) {
           <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 relative items-start">
             <div className="hidden lg:block lg:w-1/4 sticky top-32">
               <h3 className="font-heading font-bold text-primary-950 mb-6 uppercase tracking-wider text-sm">
-                Table of Contents
+                {data.tableOfContentsLabel ||
+                  LEGAL_PAGE_CONTENT.tableOfContentsLabel}
               </h3>
               <nav className="flex flex-col gap-1 border-l border-primary-100">
                 {data.sections.map((section) => (

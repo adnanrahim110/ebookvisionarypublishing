@@ -8,39 +8,7 @@ import { Heading } from "@/components/ui/heading";
 import { Section } from "@/components/ui/section";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Text } from "@/components/ui/text";
-
-const DEFAULT_STEPS = [
-  {
-    title: "Shape the Big Idea",
-    description:
-      "We begin by understanding the heart of your book, its themes, purpose, and message. This foundational step ensures your vision is crystal clear before we write a single word.",
-    icon: "lightbulb",
-  },
-  {
-    title: "Plan with Purpose",
-    description:
-      "Our team researches, outlines, and organizes your book's direction. We build a comprehensive roadmap that ensures every chapter flows naturally and purposefully.",
-    icon: "map",
-  },
-  {
-    title: "Write with Confidence",
-    description:
-      "We guide you through each draft, helping you strengthen your voice while maintaining structure. Our collaborative process brings your ideas to life on the page.",
-    icon: "pen-tool",
-  },
-  {
-    title: "Polish Every Page",
-    description:
-      "Our expert editors refine your manuscript with careful attention to tone, clarity, pacing, and grammar. We polish your work until it shines, ready for readers.",
-    icon: "sparkles",
-  },
-  {
-    title: "Publish with Impact",
-    description:
-      "Your book is completed with professional formatting, custom cover design, and a seamless publishing process. We help you launch your masterpiece to the world.",
-    icon: "rocket",
-  },
-];
+import { HOME_PROCESS } from "@/constants";
 
 const ACCENTS = [
   {
@@ -76,9 +44,11 @@ const ACCENTS = [
 ];
 
 export function HowItWorks({
-  processSteps = DEFAULT_STEPS,
+  processSteps = HOME_PROCESS.steps,
+  content = HOME_PROCESS,
 }: {
   processSteps?: { title: string; description: string; icon: string }[];
+  content?: typeof HOME_PROCESS;
 }) {
   const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -92,10 +62,10 @@ export function HowItWorks({
       <Container>
         <div className="text-center max-w-2xl mx-auto mb-24 flex flex-col items-center relative z-10">
           <SectionLabel className="mb-4 text-secondary-400">
-            The Process
+            {content.label}
           </SectionLabel>
           <Heading as="h2" size="h2" className="text-white justify-center">
-            How It Works.
+            {content.heading}
           </Heading>
         </div>
 
@@ -110,7 +80,7 @@ export function HowItWorks({
             }}
           />
 
-          <div className="flex flex-col gap-24 md:gap-40">
+          <div className="flex flex-col gap-20 md:gap-24">
             {processSteps.map((step, i) => (
               <TimelineStep key={i} step={step} i={i} />
             ))}
@@ -122,7 +92,7 @@ export function HowItWorks({
 }
 
 interface TimelineStepProps {
-  step: (typeof DEFAULT_STEPS)[0];
+  step: (typeof HOME_PROCESS.steps)[0];
   i: number;
 }
 
@@ -194,7 +164,7 @@ function TimelineStep({ step, i }: TimelineStepProps) {
         <div className="hidden md:block md:w-1/2 relative h-50">
           <motion.div
             style={{ opacity: activeOpacity, scale, y }}
-            className={`absolute top-1/2 -translate-y-1/2 ${isEven ? "left-24" : "right-24"} text-[14rem] lg:text-[18rem] font-heading font-black text-white/2 select-none pointer-events-none tracking-tighter`}
+            className={`absolute top-1/2 -translate-y-1/2 ${isEven ? "left-24" : "right-24"} text-[14rem] lg:text-[18rem] font-heading font-black text-white/2 select-none pointer-events-none tracking-wide`}
           >
             0{i + 1}
           </motion.div>
