@@ -1,4 +1,3 @@
-import AppShell from "@/components/layouts/AppShell";
 import type { Metadata } from "next";
 import { Montserrat, Poppins } from "next/font/google";
 import { getGlobalSettings } from "@/sanity/lib/content";
@@ -33,7 +32,7 @@ export default function RootLayout({
       className={`${montserrat.variable} ${poppins.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <AppShell>{children}</AppShell>
+        {children}
       </body>
     </html>
   );
