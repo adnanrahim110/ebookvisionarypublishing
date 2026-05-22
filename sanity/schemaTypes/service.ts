@@ -97,6 +97,8 @@ export const service = defineType({
         }),
       ],
     }),
+    defineField({ name: 'processLabel', title: 'Process Label', type: 'string' }),
+    defineField({ name: 'processHeading', title: 'Process Heading', type: 'string' }),
     defineField({
       name: 'testimonials',
       title: 'Service Testimonials',

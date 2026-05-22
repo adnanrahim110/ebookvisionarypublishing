@@ -153,6 +153,8 @@ const serviceFields = groq`
   "benefitImages": benefitImages[].asset->url,
   stats,
   process,
+  processLabel,
+  processHeading,
   testimonials,
   faqs,
   cta

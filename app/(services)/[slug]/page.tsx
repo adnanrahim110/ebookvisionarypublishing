@@ -59,6 +59,10 @@ export default async function ServicePage({
     notFound();
   }
 
+  const serviceProcessSteps = service.process?.length
+    ? service.process
+    : undefined;
+
   return (
     <main className="bg-white">
       <PageHero
@@ -80,7 +84,14 @@ export default async function ServicePage({
       <ServiceFeatures service={service} />
       <ServiceBenefits service={service} />
       <HowItWorks
-        processSteps={service.process?.length ? service.process : undefined}
+        processSteps={serviceProcessSteps}
+        content={{
+          label: service.processLabel || "The Process",
+          heading:
+            service.processHeading ||
+            `How Our ${service.title} Services Work`,
+          steps: serviceProcessSteps || [],
+        }}
       />
       <PortfolioGrid books={books} />
       <TestimonialsSection

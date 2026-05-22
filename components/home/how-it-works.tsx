@@ -43,12 +43,18 @@ const ACCENTS = [
   },
 ];
 
+type ProcessContent = {
+  label: string;
+  heading: string;
+  steps: { title: string; description: string; icon: string }[];
+};
+
 export function HowItWorks({
   processSteps = HOME_PROCESS.steps,
   content = HOME_PROCESS,
 }: {
   processSteps?: { title: string; description: string; icon: string }[];
-  content?: typeof HOME_PROCESS;
+  content?: ProcessContent;
 }) {
   const containerRef = React.useRef<HTMLDivElement>(null);
 

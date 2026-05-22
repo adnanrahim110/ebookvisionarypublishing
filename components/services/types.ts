@@ -7,7 +7,7 @@ export interface Feature {
 }
 
 export interface Stat {
-  value: number;
+  value: number | string;
   suffix?: string;
   label: string;
 }

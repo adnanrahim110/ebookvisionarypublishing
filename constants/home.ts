@@ -102,10 +102,11 @@ export const WHY_PUBLISH = {
 };
 
 export const SERVICES_OVERVIEW_CONTENT = {
-  label: "Our Expertise",
-  heading: "Let’s Help You Publish Your First Book",
-  description:
+  label: "Let's Help You Publish Your First Book",
+  heading:
     "Whether you have a rough idea or a completed manuscript, we can help develop, refine and publish books that look professional from the first page.",
+  description:
+    "Our full suite of publishing services covers every step of your journey, from first draft to global distribution.",
 };
 
 export const PORTFOLIO_SECTION = {
