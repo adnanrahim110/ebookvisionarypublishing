@@ -14,7 +14,7 @@ import { DUMMY_POSTS, type DummyPost } from "@/constants/blogs";
 import { LEGAL_DATA, type LegalData } from "@/constants/legal";
 import { SERVICES_DATA } from "@/constants/services";
 import type { ServiceData } from "@/components/services/types";
-import { client } from "./client";
+import { client, REVALIDATE_TAG } from "./client";
 
 type QueryParams = Record<string, string | number | boolean>;
 
@@ -67,7 +67,7 @@ export function mergeWithFallback<T>(source: unknown, fallback: T): T {
 async function safeFetch<T>(
   query: string,
   params: QueryParams = {},
-  timeoutMs = 3000,
+  timeoutMs = 5000,
 ) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
@@ -75,6 +75,7 @@ async function safeFetch<T>(
   try {
     return await client.fetch<T | null>(query, params, {
       signal: controller.signal,
+      next: { tags: [REVALIDATE_TAG] },
     });
   } catch {
     return null;

@@ -17,7 +17,11 @@ const Hero3D = dynamic(() => import("./hero-3d").then((mod) => mod.Hero3D), {
 const fadeUp = (delay: number) => ({
   initial: { opacity: 0, y: 28 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.9, delay, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
+  transition: {
+    duration: 0.9,
+    delay,
+    ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+  },
 });
 
 export function Hero({ content = HOME_HERO }: { content?: typeof HOME_HERO }) {
@@ -40,7 +44,7 @@ export function Hero({ content = HOME_HERO }: { content?: typeof HOME_HERO }) {
       <div className="absolute bottom-1/10 -left-1/10 w-[40vw] h-[40vw] rounded-full bg-primary-500/5 blur-[100px]" />
 
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-[42%] w-px h-[60%] bg-linear-to-b from-transparent via-white/6 to-transparent rotate-15 origin-top hidden lg:block" />
+        <div className="absolute top-0 right-[42%] w-px h-[50%] bg-linear-to-b from-transparent via-white/6 to-transparent rotate-15 origin-top hidden lg:block" />
         <div className="absolute top-1/5 right-[38%] w-px h-[50%] bg-linear-to-b from-transparent via-secondary-400/8 to-transparent rotate-15 origin-top hidden lg:block" />
       </div>
 
@@ -74,8 +78,8 @@ export function Hero({ content = HOME_HERO }: { content?: typeof HOME_HERO }) {
       <div className="absolute bottom-0 left-0 right-0 h-40 bg-linear-to-t from-primary-950 to-transparent pointer-events-none" />
 
       <Container className="relative z-10">
-        <div className="max-w-3xl w-full py-32 lg:py-32 relative">
-          <div className="absolute left-0 inset-y-24 w-px overflow-y-hidden bg-white/[0.07] hidden lg:block">
+        <div className="max-w-3xl w-full py-32 lg:pt-44 lg:pb-32 relative">
+          <div className="absolute left-0 inset-y-40 w-px overflow-y-hidden bg-white/[0.07] hidden lg:block">
             {!shouldReduceMotion && (
               <motion.div
                 className="absolute left-0 w-px h-20 bg-linear-to-b from-transparent via-secondary-400/60 to-transparent"
@@ -96,8 +100,8 @@ export function Hero({ content = HOME_HERO }: { content?: typeof HOME_HERO }) {
               {...(shouldReduceMotion ? {} : fadeUp(0.1))}
               className="inline-flex items-center gap-2.5 px-4 py-2 rounded-sm bg-white/4 border border-white/8 backdrop-blur-sm mb-8"
             >
-                <Sparkles className="w-3.5 h-3.5 text-secondary-400" />
-                <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-primary-200/80">
+              <Sparkles className="w-3.5 h-3.5 text-secondary-400" />
+              <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-primary-200/80">
                 {content.label}
               </span>
             </motion.div>
@@ -137,7 +141,11 @@ export function Hero({ content = HOME_HERO }: { content?: typeof HOME_HERO }) {
                   {content.primaryCta.label}
                   <ArrowRight size={18} />
                 </Button>
-                <Button size="lg" variant="outline-white" href={content.secondaryCta.href}>
+                <Button
+                  size="lg"
+                  variant="outline-white"
+                  href={content.secondaryCta.href}
+                >
                   {content.secondaryCta.label}
                 </Button>
               </div>

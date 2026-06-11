@@ -11,6 +11,8 @@ import {
   Send,
   User,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import * as React from "react";
 
 import { Container } from "@/components/ui/container";
@@ -22,10 +24,9 @@ import { Section } from "@/components/ui/section";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Text } from "@/components/ui/text";
 import { CONTACT_DETAILS, CONTACT_SECTION, SERVICE_OPTIONS } from "@/constants";
-import { cn } from "@/utils/cn";
 import { useReducedMotion } from "@/utils/use-reduced-motion";
 
-const ICONS_MAP: Record<string, any> = {
+const ICONS_MAP: Record<string, LucideIcon> = {
   phone: Phone,
   email: Mail,
   office: MapPin,
@@ -38,9 +39,57 @@ export function ContactSection({
   content?: typeof CONTACT_SECTION;
   contactDetails?: typeof CONTACT_DETAILS;
 }) {
+  const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
   const formRef = React.useRef<HTMLDivElement>(null);
   const formInView = useInView(formRef, { once: true, amount: 0.1 });
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [formError, setFormError] = React.useState("");
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setFormError("");
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const payload = {
+      fullName: String(formData.get("fullName") || ""),
+      email: String(formData.get("email") || ""),
+      phone: String(formData.get("phone") || ""),
+      service: String(formData.get("service") || ""),
+      message: String(formData.get("message") || ""),
+      website: String(formData.get("website") || ""),
+    };
+
+    if (!payload.service) {
+      setFormError("Please choose a service of interest.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(result.error || "Message could not be sent right now.");
+      }
+
+      router.push("/thankyou");
+    } catch (error) {
+      setFormError(
+        error instanceof Error
+          ? error.message
+          : "Message could not be sent right now."
+      );
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <Section spacing="lg" className="bg-white overflow-hidden">
@@ -162,26 +211,64 @@ export function ContactSection({
 
               <form
                 className="flex flex-col gap-6"
-                onSubmit={(e) => e.preventDefault()}
+                onSubmit={handleSubmit}
               >
+                <input
+                  type="text"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  className="hidden"
+                />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormInput icon={User} label={content.fullNameLabel} type="text" />
-                  <FormInput icon={Mail} label={content.emailLabel} type="email" />
+                  <FormInput
+                    icon={User}
+                    label={content.fullNameLabel}
+                    name="fullName"
+                    type="text"
+                    autoComplete="name"
+                    required
+                  />
+                  <FormInput
+                    icon={Mail}
+                    label={content.emailLabel}
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormInput icon={Phone} label={content.phoneLabel} type="tel" />
+                  <FormInput
+                    icon={Phone}
+                    label={content.phoneLabel}
+                    name="phone"
+                    type="tel"
+                    autoComplete="tel"
+                    required
+                  />
                   <FormSelect
                     icon={LayoutGrid}
                     label={content.serviceLabel}
+                    name="service"
                     options={SERVICE_OPTIONS}
+                    required
                   />
                 </div>
 
                 <FormTextarea
                   icon={MessageSquare}
                   label={content.messageLabel}
+                  name="message"
+                  required
                 />
+
+                {formError && (
+                  <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                    {formError}
+                  </p>
+                )}
 
                 <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-6">
                   <Text className="text-primary-500! text-xs! text-center sm:text-left max-w-xs">
@@ -190,11 +277,12 @@ export function ContactSection({
 
                   <button
                     type="submit"
+                    disabled={isSubmitting}
                     className="relative group overflow-hidden rounded-xl bg-primary-950 w-full sm:w-auto px-10 py-5 flex items-center justify-center gap-3 transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-primary-900/10 shrink-0"
                   >
                     <div className="absolute inset-0 bg-linear-to-r from-primary-600 to-secondary-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <span className="relative z-10 font-heading font-semibold text-white text-[15px] tracking-wide">
-                      {content.submitLabel}
+                      {isSubmitting ? "Sending..." : content.submitLabel}
                     </span>
                     <div className="relative z-10 overflow-hidden w-5 h-5 flex items-center justify-center">
                       <Send className="w-4.5 h-4.5 text-white absolute group-hover:translate-x-6 group-hover:-translate-y-6 transition-transform duration-500" />

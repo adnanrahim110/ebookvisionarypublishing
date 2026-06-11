@@ -1,3 +1,5 @@
+import "./load-local-env";
+
 import {
   ABOUT_PAGE,
   BLOG_INDEX_PAGE,

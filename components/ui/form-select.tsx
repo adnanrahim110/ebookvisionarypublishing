@@ -9,11 +9,20 @@ import { cn } from "@/utils/cn";
 interface FormSelectProps {
   icon?: LucideIcon;
   label: string;
+  name?: string;
   options: { label: string; value: string }[];
   className?: string;
+  required?: boolean;
 }
 
-export function FormSelect({ icon: Icon, label, options, className }: FormSelectProps) {
+export function FormSelect({
+  icon: Icon,
+  label,
+  name,
+  options,
+  className,
+  required,
+}: FormSelectProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [selected, setSelected] = React.useState<string | null>(null);
   const selectRef = React.useRef<HTMLDivElement>(null);
@@ -32,6 +41,14 @@ export function FormSelect({ icon: Icon, label, options, className }: FormSelect
 
   return (
     <div className={cn("relative group z-20", className)} ref={selectRef}>
+      {name && (
+        <input
+          type="hidden"
+          name={name}
+          value={selected ?? ""}
+          required={required}
+        />
+      )}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}

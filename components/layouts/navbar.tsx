@@ -27,6 +27,7 @@ import * as React from "react";
 import { Container } from "@/components/ui/container";
 import { NAV_CONTENT, NAV_LINKS, SERVICES } from "@/constants";
 import { cn } from "@/utils/cn";
+import Image from "next/image";
 import { Button } from "../ui/button";
 
 const iconMap: Record<string, React.ElementType<any>> = {
@@ -155,7 +156,7 @@ export function Navbar({
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-all duration-500",
         isHeaderWhiteBg
-          ? "bg-white/80 backdrop-blur-2xl border-b border-primary-900/5 py-4 shadow-[0_4px_30px_rgba(0,0,0,0.03)]"
+          ? "bg-white border-b border-primary-900/5 py-1.5 shadow-[0_4px_30px_rgba(0,0,0,0.03)]"
           : "bg-transparent border-transparent py-6",
       )}
     >
@@ -171,8 +172,13 @@ export function Navbar({
               isTextDark ? "text-primary-950" : "text-white",
             )}
           >
-            {content.brandMark}
-            <span className="text-secondary-500">.</span>
+            <Image
+              src={content.brandLogo}
+              alt={content.brandName}
+              width={720}
+              height={720}
+              className="h-22 w-auto"
+            />
           </span>
         </Link>
 
@@ -244,7 +250,8 @@ export function Navbar({
                           <div className="absolute top-0 left-0 w-full h-1.5 bg-linear-to-r from-secondary-400 to-primary-500 opacity-80" />
 
                           {services.map((service) => {
-                            const Icon = (iconMap[service.icon] || Feather) as any;
+                            const Icon = (iconMap[service.icon] ||
+                              Feather) as any;
                             const isActive = pathname === service.href;
                             return (
                               <Link

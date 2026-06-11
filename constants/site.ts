@@ -49,7 +49,8 @@ export const NAV_LINKS = [
 ];
 
 export const NAV_CONTENT = {
-  brandMark: "EVP",
+  brandLogo: "/images/logo.png",
+  brandName: "Ebook Visionary Publishing",
   ctaLabel: "Get Started",
   ctaHref: "/contact",
 };
@@ -62,7 +63,8 @@ export const SERVICES = SERVICES_DATA.map((service) => ({
 }));
 
 export const FOOTER_CONTENT = {
-  brandMark: "EVP",
+  brandLogo: "/images/logo.png",
+  brandName: "Ebook Visionary Publishing",
   watermark: "VISIONARY.",
   description:
     "Thoughtfully crafted, beautifully produced. We bring your story to life with premium publishing support from start to finish.",
