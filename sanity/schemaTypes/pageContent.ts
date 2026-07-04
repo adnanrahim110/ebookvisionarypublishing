@@ -13,13 +13,54 @@ const buttonFields = [
   defineField({ name: 'href', title: 'Link', type: 'string' }),
 ]
 
+const contactSectionFields = [
+  defineField({ name: 'label', title: 'Label', type: 'string' }),
+  defineField({ name: 'heading', title: 'Heading', type: 'string' }),
+  defineField({ name: 'headingEmphasis', title: 'Heading Emphasis', type: 'string' }),
+  defineField({ name: 'description', title: 'Description', type: 'text' }),
+  defineField({ name: 'infoHeading', title: 'Info Heading', type: 'string' }),
+  defineField({ name: 'formHeading', title: 'Form Heading', type: 'string' }),
+  defineField({ name: 'formDescription', title: 'Form Description', type: 'text' }),
+  defineField({ name: 'fullNameLabel', title: 'Full Name Label', type: 'string' }),
+  defineField({ name: 'emailLabel', title: 'Email Label', type: 'string' }),
+  defineField({ name: 'phoneLabel', title: 'Phone Label', type: 'string' }),
+  defineField({ name: 'serviceLabel', title: 'Service Label', type: 'string' }),
+  defineField({ name: 'messageLabel', title: 'Message Label', type: 'string' }),
+  defineField({ name: 'privacyText', title: 'Privacy Text', type: 'text' }),
+  defineField({ name: 'submitLabel', title: 'Submit Label', type: 'string' }),
+]
+
+const ctaBannerFields = [
+  defineField({ name: 'label', title: 'Label', type: 'string' }),
+  defineField({ name: 'title', title: 'Title', type: 'string' }),
+  defineField({ name: 'highlight', title: 'Highlighted Text', type: 'string' }),
+  defineField({ name: 'suffix', title: 'Suffix', type: 'string' }),
+  defineField({ name: 'description', title: 'Description', type: 'text' }),
+  defineField({ name: 'primaryCta', title: 'Primary CTA', type: 'object', fields: buttonFields }),
+  defineField({ name: 'secondaryCta', title: 'Secondary CTA', type: 'object', fields: buttonFields }),
+  defineField({
+    name: 'stats',
+    title: 'Stats',
+    type: 'array',
+    of: [
+      defineArrayMember({
+        type: 'object',
+        fields: [
+          defineField({ name: 'value', title: 'Value', type: 'string' }),
+          defineField({ name: 'label', title: 'Label', type: 'string' }),
+        ],
+      }),
+    ],
+  }),
+]
+
 const seoField = defineField({ name: 'seo', title: 'SEO Settings', type: 'seo' })
 
 const pageHeroField = defineField({
   name: 'pageHero',
   title: 'Page Hero',
   type: 'object',
-  hidden: hideUnless('about', 'contact', 'blogs', 'services'),
+  hidden: hideUnless('about', 'contact', 'blogs', 'services', 'portfolio'),
   fields: [
     defineField({ name: 'title', title: 'Title', type: 'string' }),
     defineField({ name: 'subtitle', title: 'Subtitle', type: 'text' }),
@@ -77,6 +118,7 @@ export const pageContent = defineType({
           { title: 'About', value: 'about' },
           { title: 'Contact', value: 'contact' },
           { title: 'Blogs Index', value: 'blogs' },
+          { title: 'Portfolio', value: 'portfolio' },
         ],
       },
       validation: (Rule) => Rule.required(),
@@ -92,6 +134,22 @@ export const pageContent = defineType({
         defineField({ name: 'label', title: 'Label', type: 'string' }),
         defineField({ name: 'title', title: 'Title', type: 'string' }),
         defineField({ name: 'description', title: 'Description', type: 'text' }),
+        defineField({
+          name: 'books',
+          title: '3D Book Covers',
+          type: 'array',
+          of: [
+            defineArrayMember({
+              type: 'object',
+              fields: [
+                defineField({ name: 'coverImage', title: 'Cover Image', type: 'image', options: { hotspot: true } }),
+                defineField({ name: 'coverUrl', title: 'Fallback Cover URL', type: 'url' }),
+                defineField({ name: 'spineColor', title: 'Spine Color', type: 'string' }),
+              ],
+            }),
+          ],
+          validation: (Rule) => Rule.max(3),
+        }),
         defineField({
           name: 'stats',
           title: 'Hero Stats',
@@ -153,7 +211,7 @@ export const pageContent = defineType({
       name: 'portfolio',
       title: 'Portfolio Section',
       type: 'object',
-      hidden: hideUnless('home'),
+      hidden: hideUnless('home', 'portfolio'),
       fields: [
         defineField({ name: 'label', title: 'Label', type: 'string' }),
         defineField({ name: 'heading', title: 'Heading', type: 'string' }),
@@ -182,15 +240,8 @@ export const pageContent = defineType({
         defineField({ name: 'paragraphs', title: 'Paragraphs', type: 'array', of: [{ type: 'string' }] }),
         defineField({ name: 'offerHeading', title: 'Offer Heading', type: 'string' }),
         defineField({ name: 'offers', title: 'Offers', type: 'array', of: [{ type: 'string' }] }),
-        defineField({
-          name: 'image',
-          title: 'Image',
-          type: 'object',
-          fields: [
-            defineField({ name: 'src', title: 'Static Image Path', type: 'string' }),
-            defineField({ name: 'alt', title: 'Alt Text', type: 'string' }),
-          ],
-        }),
+        defineField({ name: 'imageAsset', title: 'Image Upload', type: 'image', options: { hotspot: true } }),
+        defineField({ name: 'imageAlt', title: 'Uploaded Image Alt Text', type: 'string' }),
         defineField({
           name: 'badge',
           title: 'Badge',
@@ -228,26 +279,17 @@ export const pageContent = defineType({
     defineField({
       name: 'contact',
       title: 'Contact Section',
+      description: 'Page-specific contact section copy. Phone, email, address, and hours stay in Global Settings.',
       type: 'object',
-      hidden: hideUnless('home', 'contact'),
-      fields: [
-        defineField({ name: 'label', title: 'Label', type: 'string' }),
-        defineField({ name: 'heading', title: 'Heading', type: 'string' }),
-        defineField({ name: 'headingEmphasis', title: 'Heading Emphasis', type: 'string' }),
-        defineField({ name: 'description', title: 'Description', type: 'text' }),
-        defineField({ name: 'infoHeading', title: 'Info Heading', type: 'string' }),
-        defineField({ name: 'hoursLabel', title: 'Hours Label', type: 'string' }),
-        defineField({ name: 'hours', title: 'Hours', type: 'string' }),
-        defineField({ name: 'formHeading', title: 'Form Heading', type: 'string' }),
-        defineField({ name: 'formDescription', title: 'Form Description', type: 'text' }),
-        defineField({ name: 'fullNameLabel', title: 'Full Name Label', type: 'string' }),
-        defineField({ name: 'emailLabel', title: 'Email Label', type: 'string' }),
-        defineField({ name: 'phoneLabel', title: 'Phone Label', type: 'string' }),
-        defineField({ name: 'serviceLabel', title: 'Service Label', type: 'string' }),
-        defineField({ name: 'messageLabel', title: 'Message Label', type: 'string' }),
-        defineField({ name: 'privacyText', title: 'Privacy Text', type: 'text' }),
-        defineField({ name: 'submitLabel', title: 'Submit Label', type: 'string' }),
-      ],
+      hidden: hideUnless('home', 'services', 'contact'),
+      fields: contactSectionFields,
+    }),
+    defineField({
+      name: 'ctaBanner',
+      title: 'CTA Banner',
+      type: 'object',
+      hidden: hideUnless('about', 'services', 'portfolio'),
+      fields: ctaBannerFields,
     }),
     defineField({
       name: 'archive',

@@ -15,6 +15,28 @@ const iconOptions = [
   'rocket',
 ]
 
+const buttonFields = [
+  defineField({ name: 'label', title: 'Label', type: 'string' }),
+  defineField({ name: 'href', title: 'Link', type: 'string' }),
+]
+
+const contactSectionFields = [
+  defineField({ name: 'label', title: 'Label', type: 'string' }),
+  defineField({ name: 'heading', title: 'Heading', type: 'string' }),
+  defineField({ name: 'headingEmphasis', title: 'Heading Emphasis', type: 'string' }),
+  defineField({ name: 'description', title: 'Description', type: 'text' }),
+  defineField({ name: 'infoHeading', title: 'Info Heading', type: 'string' }),
+  defineField({ name: 'formHeading', title: 'Form Heading', type: 'string' }),
+  defineField({ name: 'formDescription', title: 'Form Description', type: 'text' }),
+  defineField({ name: 'fullNameLabel', title: 'Full Name Label', type: 'string' }),
+  defineField({ name: 'emailLabel', title: 'Email Label', type: 'string' }),
+  defineField({ name: 'phoneLabel', title: 'Phone Label', type: 'string' }),
+  defineField({ name: 'serviceLabel', title: 'Service Label', type: 'string' }),
+  defineField({ name: 'messageLabel', title: 'Message Label', type: 'string' }),
+  defineField({ name: 'privacyText', title: 'Privacy Text', type: 'text' }),
+  defineField({ name: 'submitLabel', title: 'Submit Label', type: 'string' }),
+]
+
 export const service = defineType({
   name: 'service',
   title: 'Service',
@@ -41,8 +63,10 @@ export const service = defineType({
     defineField({ name: 'overviewLabel', title: 'Overview Label', type: 'string' }),
     defineField({ name: 'overviewHeading', title: 'Overview Heading', type: 'string' }),
     defineField({ name: 'overview', title: 'Overview Body', type: 'text', rows: 6 }),
+    defineField({ name: 'overviewImage', title: 'Overview Image', type: 'image', options: { hotspot: true } }),
     defineField({ name: 'featuresLabel', title: 'Features Label', type: 'string' }),
     defineField({ name: 'featuresHeading', title: 'Features Heading', type: 'string' }),
+    defineField({ name: 'featuresDescription', title: 'Features Description', type: 'text' }),
     defineField({
       name: 'features',
       title: 'Features',
@@ -133,10 +157,35 @@ export const service = defineType({
       title: 'CTA',
       type: 'object',
       fields: [
+        defineField({ name: 'label', title: 'Label', type: 'string' }),
         defineField({ name: 'title', title: 'Title', type: 'string' }),
         defineField({ name: 'highlight', title: 'Highlighted Text', type: 'string' }),
+        defineField({ name: 'suffix', title: 'Suffix', type: 'string' }),
         defineField({ name: 'description', title: 'Description', type: 'text' }),
+        defineField({ name: 'primaryCta', title: 'Primary CTA', type: 'object', fields: buttonFields }),
+        defineField({ name: 'secondaryCta', title: 'Secondary CTA', type: 'object', fields: buttonFields }),
+        defineField({
+          name: 'stats',
+          title: 'Stats',
+          type: 'array',
+          of: [
+            defineArrayMember({
+              type: 'object',
+              fields: [
+                defineField({ name: 'value', title: 'Value', type: 'string' }),
+                defineField({ name: 'label', title: 'Label', type: 'string' }),
+              ],
+            }),
+          ],
+        }),
       ],
+    }),
+    defineField({
+      name: 'contact',
+      title: 'Contact Section',
+      description: 'Service-specific contact section copy. Phone, email, address, and hours stay in Global Settings.',
+      type: 'object',
+      fields: contactSectionFields,
     }),
     defineField({ name: 'orderRank', title: 'Order', type: 'number' }),
   ],

@@ -9,13 +9,30 @@ const W = 2.5;
 const H = 3.5;
 const D = 0.3;
 
+type HeroBook = {
+  coverUrl: string;
+  spineColor: string;
+};
+
+const DEFAULT_BOOKS: HeroBook[] = [
+  { coverUrl: "/images/books/cover-1.png", spineColor: "#8b1a1a" },
+  { coverUrl: "/images/books/cover-2.png", spineColor: "#5c1a6e" },
+  { coverUrl: "/images/books/cover-3.png", spineColor: "#0a4a3a" },
+];
+
 function FloatingBook({
   position,
   rotation,
   scale,
   coverUrl,
   spineColor,
-}: any) {
+}: {
+  position: [number, number, number];
+  rotation: [number, number, number];
+  scale: number;
+  coverUrl: string;
+  spineColor: string;
+}) {
   const group = React.useRef<THREE.Group>(null);
   const baseRotation = React.useRef(rotation);
   const coverTexture = useLoader(TextureLoader, coverUrl) as THREE.Texture;
@@ -101,7 +118,12 @@ function FloatingBook({
   );
 }
 
-function Scene() {
+function Scene({ books = DEFAULT_BOOKS }: { books?: HeroBook[] }) {
+  const displayBooks = books.length ? books : DEFAULT_BOOKS;
+  const firstBook = displayBooks[0] || DEFAULT_BOOKS[0];
+  const secondBook = displayBooks[1] || DEFAULT_BOOKS[1];
+  const thirdBook = displayBooks[2] || DEFAULT_BOOKS[2];
+
   return (
     <>
       <ambientLight intensity={1.6} />
@@ -117,28 +139,28 @@ function Scene() {
         position={[1.2, 1.8, -1]}
         rotation={[0.1, -0.4, 0.05]}
         scale={1}
-        coverUrl="/images/books/cover-1.png"
-        spineColor="#8b1a1a"
+        coverUrl={firstBook.coverUrl}
+        spineColor={firstBook.spineColor}
       />
       <FloatingBook
         position={[4, -0.2, -3]}
         rotation={[-0.1, -0.6, -0.1]}
         scale={0.8}
-        coverUrl="/images/books/cover-2.png"
-        spineColor="#5c1a6e"
+        coverUrl={secondBook.coverUrl}
+        spineColor={secondBook.spineColor}
       />
       <FloatingBook
         position={[0.8, -3, -5]}
         rotation={[0.2, -0.3, -0.05]}
         scale={1.3}
-        coverUrl="/images/books/cover-3.png"
-        spineColor="#0a4a3a"
+        coverUrl={thirdBook.coverUrl}
+        spineColor={thirdBook.spineColor}
       />
     </>
   );
 }
 
-export function Hero3D() {
+export function Hero3D({ books = DEFAULT_BOOKS }: { books?: HeroBook[] }) {
   return (
     <div className="absolute inset-y-10 right-10 w-[55%] z-1 overflow-hidden hidden lg:block" style={{ pointerEvents: "none" }}>
       <Canvas
@@ -149,7 +171,7 @@ export function Hero3D() {
         eventSource={typeof document !== "undefined" ? document.documentElement : undefined}
       >
         <React.Suspense fallback={null}>
-          <Scene />
+          <Scene books={books} />
         </React.Suspense>
       </Canvas>
     </div>

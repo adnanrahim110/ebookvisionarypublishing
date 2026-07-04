@@ -11,6 +11,7 @@ import {
   SERVICES,
 } from "@/constants";
 import { Mail, Phone } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 function AnimatedFooterLink({ text, href }: { text: string; href: string }) {
@@ -80,11 +81,14 @@ export function Footer({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-0 mb-24">
           <div className="lg:col-span-5 flex flex-col justify-between pr-0 lg:pr-16 border-b lg:border-b-0 lg:border-r border-white/10 pb-12 lg:pb-0">
             <div>
-              <Link href="/" className="inline-block mb-8">
-                <span className="font-heading text-5xl lg:text-6xl font-bold text-white tracking-tight flex items-baseline">
-                  {footer.brandMark}
-                  <span className="text-secondary-500">.</span>
-                </span>
+              <Link href="/" className="inline-block mb-4">
+                <Image
+                  src={footer.brandLogo}
+                  alt={footer.brandName}
+                  width={720}
+                  height={720}
+                  className="h-32 w-auto saturate-0 brightness-800"
+                />
               </Link>
               <Text
                 size="lg"

@@ -11,8 +11,6 @@ import {
 } from "@/sanity/lib/content";
 import { metadataFromSeo } from "@/sanity/lib/metadata";
 
-export const revalidate = 60;
-
 export async function generateStaticParams() {
   const slugs = await getBlogSlugs();
   return slugs.map((slug) => ({ slug }));

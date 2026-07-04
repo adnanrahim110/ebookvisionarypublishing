@@ -18,8 +18,6 @@ import {
 } from "@/sanity/lib/content";
 import { metadataFromSeo } from "@/sanity/lib/metadata";
 
-export const revalidate = 60;
-
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getHomePage();
   return metadataFromSeo(page.seo);

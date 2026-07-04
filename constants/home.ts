@@ -47,6 +47,11 @@ export const HOME_HERO = {
   title: "Turn Your Manuscript Into A Book Readers Remember",
   description:
     "Ebook Visionary Publishing is a trusted book publishing company that provides ghost writing, editing, ebook writing, book marketing, and self-publishing services for aspiring and established authors from around the globe.",
+  books: [
+    { coverUrl: "/images/books/cover-1.png", spineColor: "#8b1a1a" },
+    { coverUrl: "/images/books/cover-2.png", spineColor: "#5c1a6e" },
+    { coverUrl: "/images/books/cover-3.png", spineColor: "#0a4a3a" },
+  ],
   stats: [
     { value: "300+", label: "Books Published" },
     { value: "98%", label: "Client Satisfaction" },

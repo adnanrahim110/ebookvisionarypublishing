@@ -2,44 +2,61 @@
   "name": "evp",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "20.20.2",
+    "npm": ">=10 <12"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed:sanity": "tsx scripts/seed-sanity.ts"
+    "seed:sanity": "tsx scripts/seed-sanity.ts",
+    "seed:sanity-images": "tsx scripts/seed-sanity-images.ts"
   },
   "dependencies": {
-    "@radix-ui/react-slot": "^1.2.4",
-    "@react-three/drei": "^10.7.7",
-    "@react-three/fiber": "^9.6.1",
-    "@sanity/image-url": "^2.1.1",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "framer-motion": "^12.38.0",
-    "gsap": "^3.15.0",
-    "lucide-react": "^1.14.0",
-    "next": "16.2.4",
-    "next-sanity": "^12.4.0",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
-    "react-icons": "^5.6.0",
-    "sanity": "^5.23.0",
-    "styled-components": "^6.4.1",
-    "swiper": "^12.1.4",
-    "tailwind-merge": "^3.5.0",
-    "three": "^0.184.0"
+    "@radix-ui/react-slot": "1.2.5",
+    "@react-three/drei": "10.7.7",
+    "@react-three/fiber": "9.6.1",
+    "@sanity/client": "7.22.1",
+    "@sanity/image-url": "2.1.1",
+    "@sanity/webhook": "4.0.4",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "framer-motion": "12.40.0",
+    "groq": "5.31.1",
+    "gsap": "3.15.0",
+    "lucide-react": "1.18.0",
+    "next": "16.2.9",
+    "next-sanity": "13.0.0",
+    "nodemailer": "8.0.11",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "react-icons": "5.6.0",
+    "sanity": "5.31.1",
+    "styled-components": "6.4.2",
+    "swiper": "12.2.0",
+    "tailwind-merge": "3.6.0",
+    "three": "0.184.0"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "@types/three": "^0.184.0",
+    "@tailwindcss/postcss": "4.3.1",
+    "@types/node": "20.19.43",
+    "@types/nodemailer": "8.0.1",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "@types/three": "0.184.1",
     "babel-plugin-react-compiler": "1.0.0",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.4",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.2.9",
+    "tailwindcss": "4.3.1",
+    "tsx": "4.22.4",
+    "typescript": "6.0.3"
+  },
+  "overrides": {
+    "next": {
+      "postcss": "8.5.10"
+    },
+    "@sanity/uuid": "3.0.3"
   }
 }

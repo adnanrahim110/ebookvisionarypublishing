@@ -1,4 +1,4 @@
-import { groq } from "next-sanity";
+import groq from "groq";
 
 import {
   ABOUT_PAGE,
@@ -7,6 +7,7 @@ import {
   GLOBAL_SETTINGS,
   HOME_PAGE,
   PORTFOLIO_BOOKS,
+  PORTFOLIO_PAGE,
   SERVICES_INDEX_PAGE,
   TESTIMONIALS,
 } from "@/constants";
@@ -67,7 +68,7 @@ export function mergeWithFallback<T>(source: unknown, fallback: T): T {
 async function safeFetch<T>(
   query: string,
   params: QueryParams = {},
-  timeoutMs = 3000,
+  timeoutMs = 5000,
 ) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
@@ -75,6 +76,7 @@ async function safeFetch<T>(
   try {
     return await client.fetch<T | null>(query, params, {
       signal: controller.signal,
+      cache: "no-store",
     });
   } catch {
     return null;
@@ -110,22 +112,38 @@ function mergeServices(source: ServiceData[] | null) {
 const pageContentFields = groq`
   seo,
   pageHero,
-  homeHero,
   stats,
   whyPublish,
   servicesOverview,
   portfolio,
   process,
-  pricing,
+  pricing{
+    ...,
+    "image": {
+      "src": coalesce(imageAsset.asset->url, image.src),
+      "alt": coalesce(imageAlt, image.alt)
+    }
+  },
   testimonials,
   faq,
   contact,
+  ctaBanner,
   archive,
   detail,
   story,
   missionVision,
   strengths,
   aboutProcess
+`;
+
+const homeHeroFields = groq`
+  homeHero{
+    ...,
+    books[]{
+      "coverUrl": coalesce(coverImage.asset->url, coverUrl),
+      spineColor
+    }
+  }
 `;
 
 const serviceFields = groq`
@@ -140,8 +158,10 @@ const serviceFields = groq`
   overviewLabel,
   overviewHeading,
   overview,
+  "overviewImage": overviewImage.asset->url,
   featuresLabel,
   featuresHeading,
+  featuresDescription,
   features[]{
     title,
     description,
@@ -157,13 +177,14 @@ const serviceFields = groq`
   processHeading,
   testimonials,
   faqs,
-  cta
+  cta,
+  contact
 `;
 
 export async function getHomePage() {
   const data = await safeFetch<typeof HOME_PAGE>(
     groq`*[_type == "pageContent" && pageKey == "home"][0]{
-      "hero": homeHero,
+      "hero": ${homeHeroFields},
       ${pageContentFields}
     }`,
   );
@@ -178,10 +199,19 @@ export async function getGlobalSettings() {
       contactPhone,
       contactEmail,
       address,
+      businessHoursLabel,
+      businessHours,
+      contactSection,
       "defaultSeo": globalSeo,
-      nav,
+      nav{
+        ...,
+        "brandLogo": coalesce(brandLogoImage.asset->url, brandLogo)
+      },
       navLinks,
-      footer
+      footer{
+        ...,
+        "brandLogo": coalesce(brandLogoImage.asset->url, brandLogo)
+      }
     }`,
   );
 
@@ -231,6 +261,17 @@ export async function getServicesIndexPage() {
   );
 
   return mergeWithFallback(data, SERVICES_INDEX_PAGE);
+}
+
+export async function getPortfolioPage() {
+  const data = await safeFetch<typeof PORTFOLIO_PAGE>(
+    groq`*[_type == "pageContent" && pageKey == "portfolio"][0]{
+      "hero": pageHero,
+      ${pageContentFields}
+    }`,
+  );
+
+  return mergeWithFallback(data, PORTFOLIO_PAGE);
 }
 
 export async function getServices() {

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { CheckCircle, ChevronRight } from "lucide-react";
+import Image from "next/image";
 import * as React from "react";
 
 import { Container } from "@/components/ui/container";
@@ -10,15 +11,6 @@ import { Section } from "@/components/ui/section";
 import { Text } from "@/components/ui/text";
 import { useReducedMotion } from "@/utils/use-reduced-motion";
 import { ServiceData } from "./types";
-
-const FEATURE_IMAGES = [
-  "https://images.unsplash.com/photo-1455390582262-044cdead27d8?auto=format&fit=crop&q=80&w=800",
-  "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=800",
-  "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&q=80&w=800",
-  "https://images.unsplash.com/photo-1476275466078-4007374efac4?auto=format&fit=crop&q=80&w=800",
-  "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=800",
-  "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?auto=format&fit=crop&q=80&w=800",
-];
 
 export function ServiceFeatures({ service }: { service: ServiceData }) {
   const shouldReduceMotion = useReducedMotion();
@@ -34,6 +26,11 @@ export function ServiceFeatures({ service }: { service: ServiceData }) {
           <Heading as="h2" size="h2" className="text-primary-950 mb-6">
             {service.featuresHeading || "Everything you need to succeed."}
           </Heading>
+          {service.featuresDescription && (
+            <Text className="text-primary-700/70 leading-relaxed">
+              {service.featuresDescription}
+            </Text>
+          )}
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-stretch">
@@ -94,17 +91,26 @@ export function ServiceFeatures({ service }: { service: ServiceData }) {
 
               <div className="w-full md:w-1/2 relative h-64 md:h-full order-1 md:order-2 bg-primary-50">
                 {service.features.map((feature, idx) => (
-                  <img
+                  <div
                     key={idx}
-                    src={
-                      feature.image ||
-                      FEATURE_IMAGES[idx % FEATURE_IMAGES.length]
-                    }
-                    alt={feature.title}
                     className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
                       activeFeature === idx ? "opacity-100" : "opacity-0"
                     }`}
-                  />
+                  >
+                    {feature.image ? (
+                      <Image
+                        src={feature.image}
+                        alt={feature.title}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center bg-primary-50">
+                        <CheckCircle className="w-16 h-16 text-secondary-500/30" />
+                      </div>
+                    )}
+                  </div>
                 ))}
                 <div className="absolute inset-0 shadow-[inset_20px_0_40px_rgba(255,255,255,1)] hidden md:block" />
               </div>

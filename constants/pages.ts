@@ -1,5 +1,5 @@
 import { BLOG_ARCHIVE_CONTENT, BLOG_DETAIL_CONTENT } from "./blogs";
-import { CONTACT_SECTION } from "./home";
+import { CONTACT_SECTION, DEFAULT_CTA_BANNER } from "./home";
 
 export const SERVICES_INDEX_PAGE = {
   seo: {
@@ -20,6 +20,8 @@ export const SERVICES_INDEX_PAGE = {
     description:
       "Every service can stand alone or combine into a complete publishing path, with expert help from manuscript development through launch.",
   },
+  ctaBanner: DEFAULT_CTA_BANNER,
+  contact: CONTACT_SECTION,
 };
 
 export const ABOUT_PAGE = {
@@ -156,6 +158,7 @@ export const ABOUT_PAGE = {
       },
     ],
   },
+  ctaBanner: DEFAULT_CTA_BANNER,
 };
 
 export const CONTACT_PAGE = {
@@ -189,4 +192,25 @@ export const BLOG_INDEX_PAGE = {
   },
   archive: BLOG_ARCHIVE_CONTENT,
   detail: BLOG_DETAIL_CONTENT,
+};
+
+export const PORTFOLIO_PAGE = {
+  seo: {
+    metaTitle: "Portfolio | Ebook Visionary Publishing",
+    metaDescription:
+      "Explore our portfolio of beautifully designed book covers and successful publishing projects.",
+  },
+  hero: {
+    title: "Our Portfolio",
+    subtitle:
+      "A showcase of our finest work. See how we bring stories to life with stunning cover designs and professional publishing.",
+    label: "Portfolio",
+    breadcrumbs: [{ label: "Home", href: "/" }, { label: "Portfolio" }],
+  },
+  portfolio: {
+    label: "Our Work",
+    heading: "Explore Our Recent Projects.",
+    description: "Browse through our collection of premium book covers crafted by our expert design team.",
+  },
+  ctaBanner: DEFAULT_CTA_BANNER,
 };

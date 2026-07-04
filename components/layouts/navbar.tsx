@@ -27,6 +27,7 @@ import * as React from "react";
 import { Container } from "@/components/ui/container";
 import { NAV_CONTENT, NAV_LINKS, SERVICES } from "@/constants";
 import { cn } from "@/utils/cn";
+import Image from "next/image";
 import { Button } from "../ui/button";
 
 const iconMap: Record<string, React.ElementType<any>> = {
@@ -114,6 +115,7 @@ export function Navbar({
   const [hidden, setHidden] = React.useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [isServicesOpen, setIsServicesOpen] = React.useState(false);
+  const [isMobileServicesOpen, setIsMobileServicesOpen] = React.useState(false);
   const pathname = usePathname();
   const { scrollY } = useScroll();
   const servicePaths = React.useMemo(
@@ -139,6 +141,7 @@ export function Navbar({
   React.useEffect(() => {
     setIsMobileMenuOpen(false);
     setIsServicesOpen(false);
+    setIsMobileServicesOpen(false);
   }, [pathname]);
 
   const isHeaderWhiteBg = isScrolled && !isMobileMenuOpen;
@@ -155,7 +158,7 @@ export function Navbar({
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-all duration-500",
         isHeaderWhiteBg
-          ? "bg-white/80 backdrop-blur-2xl border-b border-primary-900/5 py-4 shadow-[0_4px_30px_rgba(0,0,0,0.03)]"
+          ? "bg-white border-b border-primary-900/5 py-1.5 shadow-[0_4px_30px_rgba(0,0,0,0.03)]"
           : "bg-transparent border-transparent py-6",
       )}
     >
@@ -171,8 +174,13 @@ export function Navbar({
               isTextDark ? "text-primary-950" : "text-white",
             )}
           >
-            {content.brandMark}
-            <span className="text-secondary-500">.</span>
+            <Image
+              src={content.brandLogo}
+              alt={content.brandName}
+              width={720}
+              height={720}
+              className="h-16 max-lg:h-22 w-auto"
+            />
           </span>
         </Link>
 
@@ -244,7 +252,8 @@ export function Navbar({
                           <div className="absolute top-0 left-0 w-full h-1.5 bg-linear-to-r from-secondary-400 to-primary-500 opacity-80" />
 
                           {services.map((service) => {
-                            const Icon = (iconMap[service.icon] || Feather) as any;
+                            const Icon = (iconMap[service.icon] ||
+                              Feather) as any;
                             const isActive = pathname === service.href;
                             return (
                               <Link
@@ -353,45 +362,154 @@ export function Navbar({
             animate={{ opacity: 1, clipPath: "circle(150% at 100% 0%)" }}
             exit={{ opacity: 0, clipPath: "circle(0% at 100% 0%)" }}
             transition={{ duration: 0.7, ease: [0.19, 1, 0.22, 1] }}
-            className="fixed inset-0 -z-10 bg-primary-950/98 backdrop-blur-3xl md:hidden pt-32 px-8 flex flex-col h-dvh"
+            className="fixed inset-0 z-100 bg-primary-950/98 backdrop-blur-3xl md:hidden flex flex-col h-dvh"
           >
-            <div className="flex flex-col gap-8 w-full max-w-sm mx-auto">
-              {navLinks.map((link, i) => (
-                <motion.div
-                  key={link.label}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{
-                    delay: i * 0.05,
-                    duration: 0.5,
-                    ease: [0.19, 1, 0.22, 1],
-                  }}
-                >
-                  <Link
-                    href={link.href}
-                    className="font-heading text-4xl font-medium text-white block py-2 hover:text-secondary-400 transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
-                </motion.div>
-              ))}
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: navLinks.length * 0.05, duration: 0.5 }}
-                className="mt-8 pt-8 border-t border-white/10"
+            <div className="flex items-center justify-between px-6 py-6 shrink-0 border-b border-white/10">
+              <Link
+                href="/"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center"
               >
-                <Link
-                  href={content.ctaHref}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="w-full flex justify-center py-4 rounded-full bg-secondary-500 text-white font-heading font-bold text-xl hover:bg-secondary-400 transition-colors shadow-lg shadow-secondary-500/20"
-                >
-                  {content.ctaLabel}
-                </Link>
-              </motion.div>
+                <Image
+                  src={content.brandLogo}
+                  alt={content.brandName}
+                  width={720}
+                  height={720}
+                  className="h-20 w-auto saturate-0 brightness-800"
+                />
+              </Link>
+              <button
+                className="p-2 text-white hover:text-secondary-400 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <X className="h-8 w-8" />
+              </button>
             </div>
+
+            <div className="flex-1 overflow-y-auto px-8 pt-10 pb-8 overscroll-contain">
+              <div className="flex flex-col gap-6 w-full max-w-sm mx-auto">
+                {navLinks.map((link, i) => {
+                  const isActive = pathname === link.href;
+
+                  if (link.label === "Services") {
+                    return (
+                      <motion.div
+                        key={link.label}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{
+                          delay: i * 0.05,
+                          duration: 0.5,
+                          ease: [0.19, 1, 0.22, 1],
+                        }}
+                      >
+                        <button
+                          className="font-heading text-4xl font-medium flex items-center justify-between w-full text-left py-2 hover:text-secondary-400 transition-colors text-white"
+                          onClick={() =>
+                            setIsMobileServicesOpen(!isMobileServicesOpen)
+                          }
+                        >
+                          <span>{link.label}</span>
+                          <ChevronDown
+                            className={cn(
+                              "w-7 h-7 transition-transform duration-400 ease-[cubic-bezier(0.19,1,0.22,1)]",
+                              isMobileServicesOpen && "rotate-180",
+                            )}
+                          />
+                        </button>
+                        <AnimatePresence>
+                          {isMobileServicesOpen && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{
+                                duration: 0.4,
+                                ease: [0.19, 1, 0.22, 1],
+                              }}
+                              className="overflow-hidden"
+                            >
+                              <div className="flex flex-col gap-1 pl-4 ml-2 mt-4 border-l border-white/10">
+                                {services.map((service) => {
+                                  const Icon = (iconMap[service.icon] ||
+                                    Feather) as any;
+                                  const isServiceActive =
+                                    pathname === service.href;
+                                  return (
+                                    <Link
+                                      key={service.title}
+                                      href={service.href}
+                                      className={cn(
+                                        "group flex items-center gap-4 py-3 px-4 rounded-xl transition-all duration-300",
+                                        isServiceActive
+                                          ? "bg-white/10 text-white"
+                                          : "text-white/70 hover:bg-white/5 hover:text-white",
+                                      )}
+                                      onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                      <Icon
+                                        className={cn(
+                                          "w-5 h-5 transition-transform duration-300",
+                                          !isServiceActive &&
+                                            "group-hover:scale-110",
+                                        )}
+                                      />
+                                      <span className="font-body text-lg font-medium">
+                                        {service.title}
+                                      </span>
+                                    </Link>
+                                  );
+                                })}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </motion.div>
+                    );
+                  }
+
+                  return (
+                    <motion.div
+                      key={link.label}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{
+                        delay: i * 0.05,
+                        duration: 0.5,
+                        ease: [0.19, 1, 0.22, 1],
+                      }}
+                    >
+                      <Link
+                        href={link.href}
+                        className={cn(
+                          "font-heading text-4xl font-medium block py-2 hover:text-secondary-400 transition-colors",
+                          isActive ? "text-secondary-400" : "text-white",
+                        )}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {link.label}
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: navLinks.length * 0.05, duration: 0.5 }}
+              className="px-8 py-6 border-t border-white/10 bg-primary-950/50 backdrop-blur-xl"
+            >
+              <Link
+                href={content.ctaHref}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="w-full flex items-center justify-center gap-2 py-4 rounded-full bg-secondary-500 text-white font-heading font-bold text-xl hover:bg-secondary-400 transition-all active:scale-[0.98] shadow-[0_8px_30px_rgb(0,0,0,0.2)]"
+              >
+                {content.ctaLabel}
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

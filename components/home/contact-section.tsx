@@ -11,6 +11,8 @@ import {
   Send,
   User,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import * as React from "react";
 
 import { Container } from "@/components/ui/container";
@@ -18,40 +20,149 @@ import { FormInput } from "@/components/ui/form-input";
 import { FormSelect } from "@/components/ui/form-select";
 import { FormTextarea } from "@/components/ui/form-textarea";
 import { Heading } from "@/components/ui/heading";
+import { useGlobalSettings } from "@/components/layouts/global-settings-context";
 import { Section } from "@/components/ui/section";
 import { SectionLabel } from "@/components/ui/section-label";
 import { Text } from "@/components/ui/text";
 import { CONTACT_DETAILS, CONTACT_SECTION, SERVICE_OPTIONS } from "@/constants";
-import { cn } from "@/utils/cn";
 import { useReducedMotion } from "@/utils/use-reduced-motion";
 
-const ICONS_MAP: Record<string, any> = {
+type ContactContent = typeof CONTACT_SECTION;
+type ContactContentInput = Partial<ContactContent>;
+type ContactDetail = (typeof CONTACT_DETAILS)[number];
+
+const ICONS_MAP: Record<string, LucideIcon> = {
   phone: Phone,
   email: Mail,
   office: MapPin,
 };
 
+function telHref(value: string) {
+  return `tel:${value.replace(/[^0-9+]/g, "")}`;
+}
+
+function buildContactDetails(
+  settings: ReturnType<typeof useGlobalSettings>,
+): ContactDetail[] {
+  const phone = settings?.contactPhone || CONTACT_DETAILS[0].value;
+  const email = settings?.contactEmail || CONTACT_DETAILS[1].value;
+  const address = settings?.address || CONTACT_DETAILS[2].value;
+
+  return [
+    {
+      ...CONTACT_DETAILS[0],
+      value: phone,
+      href: telHref(phone),
+    },
+    {
+      ...CONTACT_DETAILS[1],
+      value: email,
+      href: `mailto:${email}`,
+    },
+    {
+      ...CONTACT_DETAILS[2],
+      value: address,
+    },
+  ];
+}
+
+function buildContactContent(
+  content: ContactContentInput | undefined,
+  settings: ReturnType<typeof useGlobalSettings>,
+): ContactContent {
+  const fallbackContent = settings?.contactSection || CONTACT_SECTION;
+  const merged = {
+    ...CONTACT_SECTION,
+    ...fallbackContent,
+    ...content,
+  };
+
+  return {
+    ...merged,
+    hoursLabel:
+      settings?.businessHoursLabel ||
+      settings?.contactSection?.hoursLabel ||
+      merged.hoursLabel,
+    hours:
+      settings?.businessHours ||
+      settings?.contactSection?.hours ||
+      merged.hours,
+  };
+}
+
 export function ContactSection({
-  content = CONTACT_SECTION,
-  contactDetails = CONTACT_DETAILS,
+  content,
+  contactDetails,
 }: {
-  content?: typeof CONTACT_SECTION;
-  contactDetails?: typeof CONTACT_DETAILS;
+  content?: ContactContentInput;
+  contactDetails?: ContactDetail[];
 }) {
+  const settings = useGlobalSettings();
+  const resolvedContent = buildContactContent(content, settings);
+  const resolvedContactDetails =
+    contactDetails || buildContactDetails(settings);
+  const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
   const formRef = React.useRef<HTMLDivElement>(null);
   const formInView = useInView(formRef, { once: true, amount: 0.1 });
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [formError, setFormError] = React.useState("");
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setFormError("");
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const payload = {
+      fullName: String(formData.get("fullName") || ""),
+      email: String(formData.get("email") || ""),
+      phone: String(formData.get("phone") || ""),
+      service: String(formData.get("service") || ""),
+      message: String(formData.get("message") || ""),
+      website: String(formData.get("website") || ""),
+    };
+
+    if (!payload.service) {
+      setFormError("Please choose a service of interest.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(result.error || "Message could not be sent right now.");
+      }
+
+      router.push("/thankyou");
+    } catch (error) {
+      setFormError(
+        error instanceof Error
+          ? error.message
+          : "Message could not be sent right now."
+      );
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <Section spacing="lg" className="bg-white overflow-hidden">
       <Container>
         <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-16">
           <div className="max-w-xl">
-            <SectionLabel className="mb-5">{content.label}</SectionLabel>
+            <SectionLabel className="mb-5">{resolvedContent.label}</SectionLabel>
             <Heading as="h2" size="h2">
-              {content.heading}{" "}
+              {resolvedContent.heading}{" "}
               <em className="not-italic text-primary-500">
-                {content.headingEmphasis}
+                {resolvedContent.headingEmphasis}
               </em>
             </Heading>
           </div>
@@ -59,7 +170,7 @@ export function ContactSection({
             size="lg"
             className="max-w-md text-primary-700/70 leading-relaxed md:pt-10"
           >
-            {content.description}
+            {resolvedContent.description}
           </Text>
         </div>
 
@@ -70,11 +181,11 @@ export function ContactSection({
 
             <div className="relative z-10 flex flex-col gap-8 h-full">
               <Heading as="h3" size="h3" className="text-white">
-                {content.infoHeading}
+                {resolvedContent.infoHeading}
               </Heading>
 
               <div className="flex flex-col gap-4">
-                {contactDetails.map((card, i) => {
+                {resolvedContactDetails.map((card, i) => {
                   const Icon = ICONS_MAP[card.id] || Phone;
                   const Wrapper = card.href ? "a" : "div";
                   const wrapperProps = card.href ? { href: card.href } : {};
@@ -123,10 +234,10 @@ export function ContactSection({
                 </div>
                 <div>
                   <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40 block mb-1">
-                    {content.hoursLabel}
+                    {resolvedContent.hoursLabel}
                   </span>
                   <span className="text-white/80 font-medium text-[15px] block">
-                    {content.hours}
+                    {resolvedContent.hours}
                   </span>
                 </div>
               </div>
@@ -153,48 +264,87 @@ export function ContactSection({
                   animated={false}
                   className="mb-4 text-primary-950"
                 >
-                  {content.formHeading}
+                  {resolvedContent.formHeading}
                 </Heading>
                 <Text className="text-primary-700 max-w-lg mx-auto sm:mx-0 text-sm">
-                  {content.formDescription}
+                  {resolvedContent.formDescription}
                 </Text>
               </div>
 
               <form
                 className="flex flex-col gap-6"
-                onSubmit={(e) => e.preventDefault()}
+                onSubmit={handleSubmit}
               >
+                <input
+                  type="text"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  className="hidden"
+                />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormInput icon={User} label={content.fullNameLabel} type="text" />
-                  <FormInput icon={Mail} label={content.emailLabel} type="email" />
+                  <FormInput
+                    icon={User}
+                    label={resolvedContent.fullNameLabel}
+                    name="fullName"
+                    type="text"
+                    autoComplete="name"
+                    required
+                  />
+                  <FormInput
+                    icon={Mail}
+                    label={resolvedContent.emailLabel}
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormInput icon={Phone} label={content.phoneLabel} type="tel" />
+                  <FormInput
+                    icon={Phone}
+                    label={resolvedContent.phoneLabel}
+                    name="phone"
+                    type="tel"
+                    autoComplete="tel"
+                    required
+                  />
                   <FormSelect
                     icon={LayoutGrid}
-                    label={content.serviceLabel}
+                    label={resolvedContent.serviceLabel}
+                    name="service"
                     options={SERVICE_OPTIONS}
+                    required
                   />
                 </div>
 
                 <FormTextarea
                   icon={MessageSquare}
-                  label={content.messageLabel}
+                  label={resolvedContent.messageLabel}
+                  name="message"
+                  required
                 />
+
+                {formError && (
+                  <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                    {formError}
+                  </p>
+                )}
 
                 <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-6">
                   <Text className="text-primary-500! text-xs! text-center sm:text-left max-w-xs">
-                    {content.privacyText}
+                    {resolvedContent.privacyText}
                   </Text>
 
                   <button
                     type="submit"
+                    disabled={isSubmitting}
                     className="relative group overflow-hidden rounded-xl bg-primary-950 w-full sm:w-auto px-10 py-5 flex items-center justify-center gap-3 transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-primary-900/10 shrink-0"
                   >
                     <div className="absolute inset-0 bg-linear-to-r from-primary-600 to-secondary-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <span className="relative z-10 font-heading font-semibold text-white text-[15px] tracking-wide">
-                      {content.submitLabel}
+                      {isSubmitting ? "Sending..." : resolvedContent.submitLabel}
                     </span>
                     <div className="relative z-10 overflow-hidden w-5 h-5 flex items-center justify-center">
                       <Send className="w-4.5 h-4.5 text-white absolute group-hover:translate-x-6 group-hover:-translate-y-6 transition-transform duration-500" />

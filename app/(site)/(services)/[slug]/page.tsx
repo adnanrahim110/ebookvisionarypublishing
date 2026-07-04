@@ -20,8 +20,6 @@ import {
 } from "@/sanity/lib/content";
 import { metadataFromSeo } from "@/sanity/lib/metadata";
 
-export const revalidate = 60;
-
 export async function generateStaticParams() {
   const slugs = await getServiceSlugs();
   return slugs.map((slug) => ({ slug }));
@@ -82,26 +80,26 @@ export default async function ServicePage({
         statsData={service.stats?.length ? service.stats : undefined}
       />
       <ServiceFeatures service={service} />
-      <ServiceBenefits service={service} />
       <HowItWorks
         processSteps={serviceProcessSteps}
         content={{
           label: service.processLabel || "The Process",
           heading:
-            service.processHeading ||
-            `How Our ${service.title} Services Work`,
+            service.processHeading || `How Our ${service.title} Services Work`,
           steps: serviceProcessSteps || [],
         }}
       />
       <PortfolioGrid books={books} />
       <TestimonialsSection
         testimonials={
-          service.testimonials?.length ? service.testimonials : globalTestimonials
+          service.testimonials?.length
+            ? service.testimonials
+            : globalTestimonials
         }
       />
       <FaqAccordion faqs={service.faqs?.length ? service.faqs : undefined} />
       <CTABanner theme="dark" ctaData={service.cta} />
-      <ContactSection />
+      <ContactSection content={service.contact} />
     </main>
   );
 }

@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from "next";
 
-import { StudioClient } from "./studio-client";
-
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Sanity Studio",
@@ -17,6 +15,8 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function StudioPage() {
+export default async function StudioPage() {
+  const { StudioClient } = await import("./studio-client");
+
   return <StudioClient />;
 }

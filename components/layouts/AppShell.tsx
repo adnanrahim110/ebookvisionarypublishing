@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/layouts/navbar";
 import { Footer } from "@/components/layouts/footer";
+import { GlobalSettingsProvider } from "@/components/layouts/global-settings-context";
 import { getGlobalSettings, getServices } from "@/sanity/lib/content";
 
 const AppShell = async ({ children }: { children: React.ReactNode }) => {
@@ -15,7 +16,7 @@ const AppShell = async ({ children }: { children: React.ReactNode }) => {
   }));
 
   return (
-    <>
+    <GlobalSettingsProvider settings={settings}>
       <Navbar
         content={settings.nav}
         navLinks={settings.navLinks}
@@ -29,7 +30,7 @@ const AppShell = async ({ children }: { children: React.ReactNode }) => {
         navLinks={settings.navLinks}
         services={serviceLinks}
       />
-    </>
+    </GlobalSettingsProvider>
   );
 };
 

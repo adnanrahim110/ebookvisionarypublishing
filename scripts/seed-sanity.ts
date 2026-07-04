@@ -1,3 +1,5 @@
+import "./load-local-env";
+
 import {
   ABOUT_PAGE,
   BLOG_INDEX_PAGE,
@@ -199,6 +201,8 @@ function pageDocs(): SanityDoc[] {
       seo: SERVICES_INDEX_PAGE.seo,
       pageHero: pageHero(SERVICES_INDEX_PAGE.hero),
       servicesOverview: SERVICES_INDEX_PAGE.servicesOverview,
+      ctaBanner: SERVICES_INDEX_PAGE.ctaBanner,
+      contact: SERVICES_INDEX_PAGE.contact,
     },
     {
       _id: "pageContent-about",
@@ -210,6 +214,7 @@ function pageDocs(): SanityDoc[] {
       missionVision: ABOUT_PAGE.missionVision,
       strengths: ABOUT_PAGE.strengths,
       aboutProcess: ABOUT_PAGE.process,
+      ctaBanner: ABOUT_PAGE.ctaBanner,
     },
     {
       _id: "pageContent-contact",
@@ -302,6 +307,9 @@ function otherDocs(): SanityDoc[] {
       contactPhone: GLOBAL_SETTINGS.contactPhone,
       contactEmail: GLOBAL_SETTINGS.contactEmail,
       address: GLOBAL_SETTINGS.address,
+      businessHoursLabel: GLOBAL_SETTINGS.businessHoursLabel,
+      businessHours: GLOBAL_SETTINGS.businessHours,
+      contactSection: GLOBAL_SETTINGS.contactSection,
       globalSeo: GLOBAL_SETTINGS.defaultSeo,
       nav: GLOBAL_SETTINGS.nav,
       navLinks: GLOBAL_SETTINGS.navLinks,

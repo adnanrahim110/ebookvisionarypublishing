@@ -5,8 +5,6 @@ import { LegalClient } from "@/components/legal/legal-client";
 import { getLegalPage, getLegalSlugs } from "@/sanity/lib/content";
 import { metadataFromSeo } from "@/sanity/lib/metadata";
 
-export const revalidate = 60;
-
 export async function generateStaticParams() {
   const slugs = await getLegalSlugs();
   return slugs.map((slug) => ({ slug }));

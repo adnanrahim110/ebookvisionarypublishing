@@ -1,5 +1,3 @@
-import * as React from "react";
-
 export interface Feature {
   title: string;
   description: string;
@@ -24,9 +22,33 @@ export interface Faq {
 }
 
 export interface CtaData {
+  label?: string;
   title: string;
   highlight: string;
   description: string;
+  suffix?: string;
+  primaryCta?: { label: string; href: string };
+  secondaryCta?: { label: string; href: string };
+  stats?: { value: string; label: string }[];
+}
+
+export interface ContactSectionData {
+  label?: string;
+  heading?: string;
+  headingEmphasis?: string;
+  description?: string;
+  infoHeading?: string;
+  hoursLabel?: string;
+  hours?: string;
+  formHeading?: string;
+  formDescription?: string;
+  fullNameLabel?: string;
+  emailLabel?: string;
+  phoneLabel?: string;
+  serviceLabel?: string;
+  messageLabel?: string;
+  privacyText?: string;
+  submitLabel?: string;
 }
 
 export interface TestimonialData {
@@ -53,9 +75,11 @@ export interface ServiceData {
   overviewLabel?: string;
   overviewHeading?: string;
   overview: string;
+  overviewImage?: string;
 
   featuresLabel?: string;
   featuresHeading?: string;
+  featuresDescription?: string;
   features: Feature[];
 
   benefitsHeading?: string;
@@ -71,4 +95,5 @@ export interface ServiceData {
   testimonials?: TestimonialData[];
   faqs?: Faq[];
   cta?: CtaData;
+  contact?: ContactSectionData;
 }

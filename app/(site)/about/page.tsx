@@ -9,8 +9,6 @@ import { CTABanner } from "@/components/shared/cta-banner";
 import { getAboutPage } from "@/sanity/lib/content";
 import { metadataFromSeo } from "@/sanity/lib/metadata";
 
-export const revalidate = 60;
-
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getAboutPage();
   return metadataFromSeo(page.seo);
@@ -26,7 +24,7 @@ export default async function AboutPage() {
       <MissionVisionSection content={page.missionVision} />
       <StrengthsSection content={page.strengths} />
       <ProcessSection content={page.process} />
-      <CTABanner />
+      <CTABanner ctaData={page.ctaBanner} />
     </>
   );
 }

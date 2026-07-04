@@ -19,12 +19,17 @@ export function ServicesOverview({
 }: ServicesOverviewProps) {
   const displayServices =
     services.length > 0
-      ? services.map((s) => ({
-          title: s.title,
-          description: s.description || s.subtitle,
-          href: s.slug?.current ? `/${s.slug.current}` : s.href || "#",
-          icon: s.icon || "feather",
-        }))
+      ? services.map((s) => {
+          const slug =
+            typeof s.slug === "string" ? s.slug : s.slug?.current;
+
+          return {
+            title: s.title,
+            description: s.description || s.subtitle,
+            href: slug ? `/${slug}` : s.href || "#",
+            icon: s.icon || "feather",
+          };
+        })
       : SERVICES;
 
   return (

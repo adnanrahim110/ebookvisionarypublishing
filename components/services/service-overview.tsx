@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BookOpen } from "lucide-react";
+import { BookOpen, type LucideIcon } from "lucide-react";
+import Image from "next/image";
 import * as React from "react";
 
 import { Container } from "@/components/ui/container";
@@ -20,7 +21,7 @@ import {
 } from "lucide-react";
 import { ServiceData } from "./types";
 
-const iconMap: Record<string, React.ElementType<any>> = {
+const iconMap: Record<string, LucideIcon> = {
   feather: Feather,
   "edit-3": Edit3,
   "align-left": AlignLeft,
@@ -32,7 +33,11 @@ const iconMap: Record<string, React.ElementType<any>> = {
 
 export function ServiceOverview({ service }: { service: ServiceData }) {
   const shouldReduceMotion = useReducedMotion();
-  const Icon = (iconMap[service.icon] || BookOpen) as any;
+  const Icon = iconMap[service.icon] || BookOpen;
+  const overviewParagraphs = service.overview
+    .split(/\n\s*\n|\r?\n/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
 
   return (
     <Section className="bg-primary-50 overflow-hidden relative">
@@ -60,9 +65,16 @@ export function ServiceOverview({ service }: { service: ServiceData }) {
                 </>
               )}
             </Heading>
-            <Text className="text-primary-700/70 text-lg leading-relaxed">
-              {service.overview}
-            </Text>
+            <div className="flex flex-col gap-5">
+              {overviewParagraphs.map((paragraph, index) => (
+                <Text
+                  key={`${index}-${paragraph}`}
+                  className="text-primary-700/70 text-lg leading-relaxed"
+                >
+                  {paragraph}
+                </Text>
+              ))}
+            </div>
           </motion.div>
 
           <motion.div
@@ -74,8 +86,20 @@ export function ServiceOverview({ service }: { service: ServiceData }) {
           >
             <div className="absolute -inset-4 bg-linear-to-tr from-secondary-500/20 to-primary-500/20 blur-2xl rounded-[3rem] opacity-50" />
             <div className="relative aspect-square sm:aspect-video lg:aspect-4/3 rounded-3xl bg-white border border-primary-100 overflow-hidden flex items-center justify-center shadow-sm">
-              <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(6,48,75,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(6,48,75,0.03)_1px,transparent_1px)] bg-size-[2rem_2rem]" />
-              <Icon className="w-32 h-32 text-secondary-500/30" />
+              {service.overviewImage ? (
+                <Image
+                  src={service.overviewImage}
+                  alt={`${service.title} service overview`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                />
+              ) : (
+                <>
+                  <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(6,48,75,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(6,48,75,0.03)_1px,transparent_1px)] bg-size-[2rem_2rem]" />
+                  <Icon className="w-32 h-32 text-secondary-500/30" />
+                </>
+              )}
               <div className="absolute inset-0 bg-linear-to-tr from-primary-50/80 via-transparent to-transparent" />
             </div>
           </motion.div>
