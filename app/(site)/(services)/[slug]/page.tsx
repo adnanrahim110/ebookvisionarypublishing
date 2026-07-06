@@ -13,7 +13,7 @@ import { CTABanner } from "@/components/shared/cta-banner";
 import { PageHero } from "@/components/shared/page-hero";
 import { StatsRow } from "@/components/shared/stats-row";
 import {
-  getPortfolioBooks,
+  getHomePortfolioBooks,
   getService,
   getServiceSlugs,
   getTestimonials,
@@ -50,7 +50,7 @@ export default async function ServicePage({
   const [service, globalTestimonials, books] = await Promise.all([
     getService(slug),
     getTestimonials(),
-    getPortfolioBooks(),
+    getHomePortfolioBooks(),
   ]);
 
   if (!service) {

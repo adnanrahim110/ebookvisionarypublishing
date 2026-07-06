@@ -11,8 +11,8 @@ import { TestimonialsSection } from "@/components/home/testimonials-section";
 import { WhyPublish } from "@/components/home/why-publish";
 import { StatsRow } from "@/components/shared/stats-row";
 import {
+  getHomePortfolioBooks,
   getHomePage,
-  getPortfolioBooks,
   getServices,
   getTestimonials,
 } from "@/sanity/lib/content";
@@ -28,7 +28,7 @@ export default async function Home() {
     getHomePage(),
     getServices(),
     getTestimonials(),
-    getPortfolioBooks(),
+    getHomePortfolioBooks(),
   ]);
 
   return (

@@ -11,9 +11,10 @@ import { Text } from "@/components/ui/text";
 
 interface Book {
   id: string;
+  _id?: string;
   title: string;
   author?: string;
-  coverUrl: string;
+  coverUrl?: string;
   coverImage?: unknown;
 }
 
@@ -53,7 +54,7 @@ export function PortfolioGrid({ section, books }: PortfolioSectionProps) {
         <div className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4 lg:gap-10">
           {books.map((book, index) => (
             <motion.div
-              key={book.id}
+              key={book.id ?? book._id ?? `portfolio-book-${index}`}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-10%" }}
@@ -62,7 +63,7 @@ export function PortfolioGrid({ section, books }: PortfolioSectionProps) {
             >
               <div className="absolute inset-0 z-10 bg-black/0 transition-colors duration-500 group-hover:bg-black/10" />
               <Image
-                src={book.coverUrl}
+                src={book.coverUrl || "/images/books/cover-1.png"}
                 alt={book.title}
                 fill
                 className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"

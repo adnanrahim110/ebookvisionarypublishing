@@ -1,6 +1,10 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 import type { ConditionalPropertyCallbackContext } from 'sanity'
 
+type ReferenceValue = {
+  _ref?: string
+}
+
 const hideUnless =
   (...keys: string[]) =>
   ({ document }: ConditionalPropertyCallbackContext) => {
@@ -217,6 +221,29 @@ export const pageContent = defineType({
         defineField({ name: 'heading', title: 'Heading', type: 'string' }),
         defineField({ name: 'description', title: 'Description', type: 'text' }),
       ],
+    }),
+    defineField({
+      name: 'portfolioBooks',
+      title: 'Portfolio Page Book Order',
+      description: 'Drag these references to control the book order on the Portfolio page grid. The home slider still uses each Portfolio Book document order field.',
+      type: 'array',
+      hidden: hideUnless('portfolio'),
+      of: [
+        defineArrayMember({
+          type: 'reference',
+          to: [{ type: 'portfolioBook' }],
+        }),
+      ],
+      validation: (Rule) =>
+        Rule.custom((items?: ReferenceValue[]) => {
+          const refs = (items || [])
+            .map((item) => item?._ref)
+            .filter((value): value is string => Boolean(value))
+
+          return refs.length === new Set(refs).size
+            ? true
+            : 'Choose each portfolio book only once.'
+        }),
     }),
     defineField({
       name: 'process',

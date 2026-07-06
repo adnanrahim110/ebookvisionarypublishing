@@ -18,6 +18,11 @@ import type { ServiceData } from "@/components/services/types";
 import { client } from "./client";
 
 type QueryParams = Record<string, string | number | boolean>;
+type PortfolioBook = (typeof PORTFOLIO_BOOKS)[number] & {
+  _id?: string;
+  coverImage?: unknown;
+  orderRank?: number;
+};
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === "object" && !Array.isArray(value);
@@ -144,6 +149,16 @@ const homeHeroFields = groq`
       spineColor
     }
   }
+`;
+
+const portfolioBookFields = groq`
+  "_id": _id,
+  "id": _id,
+  title,
+  author,
+  "coverUrl": coalesce(coverImage.asset->url, coverUrl),
+  coverImage,
+  orderRank
 `;
 
 const serviceFields = groq`
@@ -323,17 +338,34 @@ export async function getTestimonials() {
 }
 
 export async function getPortfolioBooks() {
-  const books = await safeFetch<typeof PORTFOLIO_BOOKS>(
+  const books = await safeFetch<PortfolioBook[]>(
     groq`*[_type == "portfolioBook"] | order(orderRank asc, _createdAt asc) {
-      "id": _id,
-      title,
-      author,
-      coverUrl,
-      coverImage
+      ${portfolioBookFields}
     }`,
   );
 
   return mergeWithFallback(books, PORTFOLIO_BOOKS);
+}
+
+export async function getHomePortfolioBooks() {
+  const books = await safeFetch<PortfolioBook[]>(
+    groq`*[_type == "portfolioBook"] | order(orderRank asc, _createdAt asc)[0...8] {
+      ${portfolioBookFields}
+    }`,
+  );
+
+  return mergeWithFallback(books, PORTFOLIO_BOOKS.slice(0, 8));
+}
+
+export async function getPortfolioPageBooks() {
+  const books = await safeFetch<PortfolioBook[]>(
+    groq`*[_type == "pageContent" && pageKey == "portfolio"][0].portfolioBooks[]->{
+      ${portfolioBookFields}
+    }`,
+  );
+
+  if (books?.length) return mergeWithFallback(books, PORTFOLIO_BOOKS);
+  return getPortfolioBooks();
 }
 
 export async function getLegalPage(slug: string) {

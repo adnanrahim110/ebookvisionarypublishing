@@ -12,6 +12,7 @@
     "start": "next start",
     "lint": "eslint",
     "seed:sanity": "tsx scripts/seed-sanity.ts",
+    "seed:portfolio-page": "tsx scripts/seed-portfolio-page.ts",
     "seed:sanity-images": "tsx scripts/seed-sanity-images.ts"
   },
   "dependencies": {

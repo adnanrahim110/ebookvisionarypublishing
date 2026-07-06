@@ -93,6 +93,7 @@ function BookSlide({ book, offset }: BookSlideProps) {
 
 interface PortfolioGridProps {
   books?: {
+    id?: string;
     _id?: string;
     title: string;
     author: string;
@@ -108,8 +109,8 @@ export function PortfolioGrid({
 }: PortfolioGridProps) {
   const displayBooks: DisplayBook[] = React.useMemo(() => {
     if (books.length > 0) {
-      return books.map((b, index) => ({
-        id: b._id ?? `portfolio-book-${index}`,
+      return books.slice(0, 8).map((b, index) => ({
+        id: b.id ?? b._id ?? `portfolio-book-${index}`,
         title: b.title,
         author: b.author,
         coverUrl: b.coverImage

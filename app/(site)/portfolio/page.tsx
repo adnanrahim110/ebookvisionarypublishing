@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { PortfolioGrid } from "@/components/portfolio/portfolio-grid";
 import { CTABanner } from "@/components/shared/cta-banner";
 import { PageHero } from "@/components/shared/page-hero";
-import { getPortfolioBooks, getPortfolioPage } from "@/sanity/lib/content";
+import { getPortfolioPage, getPortfolioPageBooks } from "@/sanity/lib/content";
 import { metadataFromSeo } from "@/sanity/lib/metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function PortfolioPage() {
   const page = await getPortfolioPage();
-  const books = await getPortfolioBooks();
+  const books = await getPortfolioPageBooks();
 
   return (
     <>
