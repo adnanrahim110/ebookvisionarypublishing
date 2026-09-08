@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
 export const runtime = "nodejs";
 
@@ -37,6 +37,10 @@ function escapeHtml(value: string) {
     .replace(/'/g, "&#039;");
 }
 
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : "Unknown email delivery error";
+}
+
 export async function POST(request: Request) {
   let body: Partial<ContactPayload>;
 
@@ -72,14 +76,11 @@ export async function POST(request: Request) {
     );
   }
 
-  const host = process.env.ZOHO_SMTP_HOST;
-  const port = Number(process.env.ZOHO_SMTP_PORT || 465);
-  const user = process.env.ZOHO_SMTP_USER;
-  const pass = process.env.ZOHO_SMTP_PASS;
-  const from = process.env.ZOHO_SMTP_FROM || user;
-  const to = process.env.CONTACT_TO || user;
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.RESEND_FROM;
+  const to = process.env.CONTACT_TO;
 
-  if (!host || !user || !pass || !from || !to) {
+  if (!apiKey || !from || !to) {
     return Response.json(
       { error: "Contact email is not configured." },
       { status: 500 }
@@ -87,17 +88,11 @@ export async function POST(request: Request) {
   }
 
   const serviceLabel = SERVICE_LABELS[payload.service] || payload.service;
-
-  const transporter = nodemailer.createTransport({
-    host,
-    port,
-    secure: port === 465,
-    auth: { user, pass },
-  });
+  const resend = new Resend(apiKey);
 
   try {
-    await transporter.sendMail({
-      from: `"Ebook Visionary Publishing" <${from}>`,
+    const { error } = await resend.emails.send({
+      from,
       to,
       replyTo: payload.email,
       subject: `New contact form submission from ${payload.fullName}`,
@@ -125,9 +120,22 @@ export async function POST(request: Request) {
       `,
     });
 
+    if (error) {
+      console.error("Contact form email failed:", {
+        name: error.name,
+        message: error.message,
+      });
+      return Response.json(
+        { error: "Message could not be sent right now." },
+        { status: 500 }
+      );
+    }
+
     return Response.json({ ok: true });
   } catch (error) {
-    console.error("Contact form email failed:", error);
+    console.error("Contact form email failed:", {
+      message: getErrorMessage(error),
+    });
     return Response.json(
       { error: "Message could not be sent right now." },
       { status: 500 }
